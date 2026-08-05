@@ -11,6 +11,9 @@
   // Fallback chain: MiLB headshot -> spots avatar -> initials circle.
   const shotMilb = id => id ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:silo:current.png/w_120,q_auto:best/v1/people/${id}/headshot/milb/current` : '';
   const shot = id => id ? `https://midfield.mlbstatic.com/v1/people/${id}/spots/120` : '';
+  // A photo dropped in docs/assets/photos/<mlbid>.jpg beats MLB's, which is how
+  // the DSL kids with no headshot on file get a real face.
+  const photoOf = p => (p && p.photo) || shotMilb(p && p.id);
   const initials = name => (name || '').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
   document.addEventListener('error', e => {
     const img = e.target;
@@ -264,7 +267,7 @@
       <div class="row-main">
         <span class="grip" ${hm ? 'style="visibility:hidden"' : ''} title="Drag to reorder">⠿</span>
         ${rankCell}
-        <img class="shot" loading="lazy" alt="" src="${shotMilb(p.id)}" data-fb="${shot(p.id)}" data-init="${esc(initials(p.name))}">
+        <img class="shot" loading="lazy" alt="" src="${esc(photoOf(p))}" data-fb="${shot(p.id)}" data-init="${esc(initials(p.name))}">
         <span class="who">
           <span class="pname">${esc(p.name)} ${chips(p)}</span>
           <span class="pmeta">${esc([p.pos, p.age ? 'Age ' + p.age : null, p.lvl].filter(Boolean).join(' · '))}</span>
@@ -280,7 +283,6 @@
     $('#list').innerHTML = order.map((id, i) => rowHTML(byId.get(id), i, false)).join('');
     $('#hm').innerHTML = hmPool().map(id => rowHTML(byId.get(id), 0, true)).join('');
     $('#reset').hidden = isDefault() && !localStorage.getItem(LS_KEY);
-    $('#shared-banner').hidden = !viewingShared;
     $('#stale-banner').hidden = !staleLink;
     sendHeight();
   }
@@ -304,12 +306,12 @@
   });
 
   // The moment a visitor edits, the list becomes theirs: drop the incoming
-  // code from the URL so it can't be re-shared as someone else's.
+  // code from the URL so it can't be re-shared as someone else's, and start
+  // saving their version locally.
   function claimIfShared() {
     if (!viewingShared && !staleLink) return;
     viewingShared = false; staleLink = false;
     history.replaceState(null, '', location.pathname);
-    $('#shared-banner').hidden = true;
     $('#stale-banner').hidden = true;
   }
 
@@ -404,13 +406,6 @@
     order = defaultOrder.slice();
     render();
   });
-  $('#adopt').addEventListener('click', () => { claimIfShared(); save(); render(); });
-  $('#see-default').addEventListener('click', e => {
-    e.preventDefault();
-    viewingShared = false;
-    history.replaceState(null, '', location.pathname);
-    load(); render();
-  });
 
   // ---------- the share card ----------
   const imgCache = {};
@@ -450,7 +445,7 @@
     const logo = opts.noLogo ? null : await loadImg('assets/af-logo.png', false);
     const shots = {};
     if (!opts.noPhotos) {
-      await Promise.all(order.map(async id => { shots[id] = await loadImg(shotMilb(id), true); }));
+      await Promise.all(order.map(async id => { shots[id] = await loadImg(photoOf(byId.get(id)), true); }));
     }
 
     x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
