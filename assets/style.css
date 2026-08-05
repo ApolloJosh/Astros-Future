@@ -101,7 +101,11 @@ a { color: var(--burnt); }
 .hm .rank { font-size: 13px; color: var(--mut); font-weight: 700; }
 .shot {
   width: 42px; height: 42px; border-radius: 50%; flex: none;
-  background: #e9ebef center/cover no-repeat; border: 2px solid var(--line);
+  background: #e9ebef; border: 2px solid var(--line); object-fit: cover;
+}
+.shot.init {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 14px; color: var(--navy);
 }
 .who { flex: 1; min-width: 0; }
 .pname { font-weight: 700; font-size: 15.5px; color: var(--navy); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }

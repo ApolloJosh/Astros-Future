@@ -6,7 +6,21 @@
   const D = window.AF_DATA || { players: [], floors: {}, labels: null, pools: [] };
   const $ = s => document.querySelector(s);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  // Headshots, sure-fire: MLB's photo CDN with a default-image transform, so a
+  // player with no photo gets a proper silhouette instead of a broken image.
+  // Fallback chain: MiLB headshot -> spots avatar -> initials circle.
+  const shotMilb = id => id ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:silo:current.png/w_120,q_auto:best/v1/people/${id}/headshot/milb/current` : '';
   const shot = id => id ? `https://midfield.mlbstatic.com/v1/people/${id}/spots/120` : '';
+  const initials = name => (name || '').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  document.addEventListener('error', e => {
+    const img = e.target;
+    if (!img || img.tagName !== 'IMG' || !img.classList.contains('shot')) return;
+    if (img.dataset.fb) { img.src = img.dataset.fb; img.removeAttribute('data-fb'); return; }
+    const span = document.createElement('span');
+    span.className = 'shot init';
+    span.textContent = img.dataset.init || '?';
+    img.replaceWith(span);
+  }, true);
 
   const FLOORS = Object.assign({ poolPA: 50, poolIP: 20, displayPA: 15, displayIP: 5 }, D.floors);
   // Fallback bar labels for builds where the percentile pull hasn't run yet.
@@ -121,8 +135,11 @@
     return h;
   }
   function detail(p) {
+    const draftTxt = p.draft && p.draft.round
+      ? `Drafted ${p.draft.year} · Round ${p.draft.round}, Pick ${p.draft.pick}`
+      : (p.draftYear ? 'Drafted ' + p.draftYear : 'Int’l signing');
     const bits = [p.bt ? 'B/T ' + p.bt : null, p.ht, p.wt ? p.wt + ' lbs' : null,
-      p.birthPlace, p.draftYear ? 'Drafted ' + p.draftYear : 'Int’l signing', p.club].filter(Boolean);
+      p.birthPlace, draftTxt, p.club].filter(Boolean);
     const season = p.line
       ? `<div class="season"><span class="lvl-tag">${esc(p.lvl || '—')}</span>${esc(p.line)}</div>`
       : `<div class="season"><span class="lvl-tag">2026</span>No game action yet</div>`;
@@ -141,7 +158,7 @@
       <div class="row-main">
         <span class="grip" ${hm ? 'style="visibility:hidden"' : ''} title="Drag to reorder">⠿</span>
         ${rankCell}
-        <span class="shot" style="background-image:url('${shot(p.id)}')"></span>
+        <img class="shot" loading="lazy" alt="" src="${shotMilb(p.id)}" data-fb="${shot(p.id)}" data-init="${esc(initials(p.name))}">
         <span class="who">
           <span class="pname">${esc(p.name)} ${chips(p)}</span>
           <span class="pmeta">${esc([p.pos, p.age ? 'Age ' + p.age : null, p.lvl].filter(Boolean).join(' · '))}</span>
