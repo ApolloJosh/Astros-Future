@@ -1,0 +1,13 @@
+{
+  "name": "astros-future-top30",
+  "version": "1.0.0",
+  "description": "Astros Future — interactive Top 30 Astros prospects for astrosfuture.com",
+  "private": true,
+  "scripts": {
+    "build": "node src/build-data.js",
+    "test": "node test/percentile.test.js && node test/rankings.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

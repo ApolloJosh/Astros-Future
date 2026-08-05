@@ -1,0 +1,15 @@
+{
+  "season": 2026,
+  "teamId": 117,
+  "sheetId": "",
+  "sheetTab": "Top 30",
+  "concurrency": 8,
+  "requestDelayMs": 60,
+  "_floors": "poolPA/poolIP gate who defines the percentile pools (full-season regulars). displayPA/displayIP are the lowered floors for SHOWING a ranked player's percentiles — below pool floors they are flagged thin and the UI shows PA/IP with a small-sample caveat. Below display floors: no bars, honest empty state.",
+  "poolPA": 50,
+  "poolIP": 20,
+  "displayPA": 15,
+  "displayIP": 5,
+  "_etaAuto": "Fallback ETA shown when the owner's sheet leaves ETA blank, keyed by current level. No (est.) suffix — the E already says estimated.",
+  "etaAuto": { "MLB": "Now", "AAA": "2026", "AA": "2027", "A+": "2028", "A": "2029", "Rk": "2030" }
+}

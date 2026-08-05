@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>DEV — percentile bar states preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../docs/assets/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="mast"><div class="mast-txt"><h1>DEV <em>bar states</em></h1>
+  <p class="tag">Fixture data only — verifies every percentile UI state before the first live data run.</p></div>
+  <div class="upd" id="updated"></div></header>
+  <div id="shared-banner" class="shared-banner" hidden><button id="adopt" class="btn sm">Remix it</button><a href="#" id="see-default" class="lnk">x</a></div>
+  <div class="toolbar"><span class="hint">Rows auto-expanded by the fixture script</span>
+  <span class="toolbtns"><button id="share" class="btn primary">Share my list</button><button id="png" class="btn">Download PNG</button><button id="reset" class="btn ghost" hidden>Reset</button></span></div>
+  <div id="share-out" class="share-out" hidden><input id="share-url" readonly><button id="copy" class="btn sm primary">Copy</button><span id="copied" class="copied" hidden>Copied ✓</span></div>
+  <ol id="list" class="list"></ol>
+  <h2 class="hm-hd">Honorable Mentions</h2><p class="hm-sub">fixture</p>
+  <ol id="hm" class="list hm"></ol>
+  <footer class="foot"></footer>
+</div>
+<script>
+// Four states: full bars (hitter), thin bars (pitcher), below-floor, no action/IL.
+window.AF_DATA = {
+  updated: '2026-08-05T12:00:00Z', season: 2026,
+  floors: { poolPA: 50, poolIP: 20, displayPA: 15, displayIP: 5 },
+  pools: [],
+  labels: null,
+  players: [
+    { id: 829037, rank: 1, hm: false, name: 'Full Bars Hitter', pos: 'OF', age: 18, lvl: 'A',
+      bt: 'L/L', ht: `6' 3"`, wt: 184, birthPlace: 'Colon, Cuba', draftYear: null, club: 'Fayetteville',
+      il: null, mlbDebut: null, graduated: false, kind: 'H', pa: 348, ip: null, thin: false,
+      line: '.280 AVG · .819 OPS · 9 HR · 14 SB', eta: '2029', pipelineRank: 2,
+      article: 'https://astrosfuture.com/example',
+      v: { ops: .819, obp: .356, slg: .463, avg: .280, iso: .183, hrRate: 2.6, bbpct: 9.2, kpct: 17.2, sb: 14, babip: .320 },
+      p: { ops: 88, obp: 79, slg: 90, avg: 81, iso: 86, hrRate: 74, bbpct: 61, kpct: 78, sb: 55, babip: 66, age: 97 },
+      comp: { production: 84, power: 83, discipline: 70 }, agg: 76, score: 80, poolN: 142 },
+    { id: 694545, rank: 2, hm: false, name: 'Thin Sample Pitcher', pos: 'RHP', age: 24, lvl: 'AAA',
+      bt: 'R/R', ht: `6' 1"`, wt: 190, birthPlace: 'Augusta, GA, USA', draftYear: 2023,
+      draft: { year: 2023, round: '4', pick: 118 }, club: 'Sugar Land',
+      il: null, mlbDebut: null, graduated: false, kind: 'P', pa: null, ip: '14.2', thin: true,
+      line: '4.91 ERA · 1.36 WHIP · 19 K · 14.2 IP', eta: '2026', pipelineRank: null, article: null,
+      v: { era: 4.91, whip: 1.36, k9: 11.66, bb9: 4.91, h9: 7.36, hr9: 0.61, kbb: 2.38, kpct: 29.7, bbpct: 12.5, strikePct: 61 },
+      p: { era: 42, whip: 47, k9: 88, bb9: 31, h9: 72, hr9: 81, kbb: 60, kpct: 85, bbpct: 28, strikePct: 44, age: 62 },
+      comp: { run_prevention: 54, stuff: 87, control: 41 }, agg: 58, score: 59, poolN: 96 },
+    { id: 825479, rank: 3, hm: false, name: 'Below Floor Kid', pos: 'C', age: 19, lvl: 'A',
+      bt: 'R/R', ht: `5' 10"`, wt: 210, birthPlace: 'La Vega, DR', draftYear: null, club: 'Fayetteville',
+      il: null, mlbDebut: null, graduated: false, kind: 'H', pa: 13, ip: null, thin: false,
+      line: '.364 AVG · .826 OPS · 0 HR · 0 SB', eta: '2029', pipelineRank: null, article: null,
+      v: null, p: null, comp: null, agg: null, score: null, poolN: null },
+    { id: 696280, rank: 4, hm: false, name: 'Injured Guy', pos: 'RHP', age: 24, lvl: null,
+      bt: 'L/R', ht: `6' 8"`, wt: 245, birthPlace: 'Marblehead, MA, USA', draftYear: 2023, club: 'Corpus Christi',
+      il: '60-Day Injured List', mlbDebut: null, graduated: false, kind: 'P', pa: null, ip: null, thin: false,
+      line: null, eta: '2027', pipelineRank: 14, article: null,
+      v: null, p: null, comp: null, agg: null, score: null, poolN: null },
+    { id: 828599, rank: null, hm: true, name: 'HM Debut Guy', pos: 'OF', age: 23, lvl: 'AAA',
+      bt: 'L/L', ht: `6' 0"`, wt: 195, birthPlace: 'Chicago Heights, IL, USA', draftYear: null, club: 'Sugar Land',
+      il: null, mlbDebut: '2026-07-17', graduated: false, kind: 'H', pa: 71, ip: null, thin: false,
+      line: '.246 AVG · .687 OPS · 1 HR · 3 SB', eta: 'Now', pipelineRank: null, article: null,
+      v: null, p: null, comp: null, agg: null, score: null, poolN: null },
+  ],
+};
+</script>
+<script src="../docs/assets/app.js"></script>
+<script>document.querySelectorAll('#list .row').forEach(r => r.classList.add('open'));</script>
+</body>
+</html>
