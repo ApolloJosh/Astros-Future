@@ -1,0 +1,293 @@
+{
+  "updated": "2026-08-05",
+  "prospects": [
+    {
+      "rank": 1,
+      "name": "Kevin Alvarez",
+      "pos": "OF",
+      "mlbid": 829037,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 2,
+      "name": "Xavier Neyens",
+      "pos": "3B",
+      "mlbid": 815832,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 3,
+      "name": "Jason Schiavone",
+      "pos": "C",
+      "mlbid": 828395,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 4,
+      "name": "Albert Fermín",
+      "pos": "SS",
+      "mlbid": 837522,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 5,
+      "name": "Bryce Mayer",
+      "pos": "RHP",
+      "mlbid": 809343,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 6,
+      "name": "Ethan Pecko",
+      "pos": "RHP",
+      "mlbid": 814490,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 7,
+      "name": "Ethan Frey",
+      "pos": "OF",
+      "mlbid": 703676,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 8,
+      "name": "Lucas Spence",
+      "pos": "OF",
+      "mlbid": 828599,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 9,
+      "name": "Walker Janek",
+      "pos": "C",
+      "mlbid": 801075,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 10,
+      "name": "Joseph Sullivan",
+      "pos": "OF",
+      "mlbid": 813896,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 11,
+      "name": "Miguel Ullola",
+      "pos": "RHP",
+      "mlbid": 699044,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 12,
+      "name": "James Hicks",
+      "pos": "RHP",
+      "mlbid": 801802,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 13,
+      "name": "Jackson Nezuh",
+      "pos": "RHP",
+      "mlbid": 694545,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 14,
+      "name": "Alimber Santa",
+      "pos": "RHP",
+      "mlbid": 695001,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 15,
+      "name": "Anthony Huezo",
+      "pos": "OF",
+      "mlbid": 805953,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 16,
+      "name": "Will Bush",
+      "pos": "C",
+      "mlbid": 813844,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 17,
+      "name": "Nick Potter",
+      "pos": "RHP",
+      "mlbid": 830769,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 18,
+      "name": "Anthony Millan",
+      "pos": "OF",
+      "mlbid": 829860,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 19,
+      "name": "Cole Hertzler",
+      "pos": "RHP",
+      "mlbid": 826315,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 20,
+      "name": "Max Holy",
+      "pos": "SS",
+      "mlbid": 802959,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 21,
+      "name": "Luis De Leon",
+      "pos": "C",
+      "mlbid": 825479,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 22,
+      "name": "Parker Smith",
+      "pos": "RHP",
+      "mlbid": 809789,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 23,
+      "name": "Caden Powell",
+      "pos": "OF",
+      "mlbid": 702547,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 24,
+      "name": "Zach Cole",
+      "pos": "OF",
+      "mlbid": 805904,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 25,
+      "name": "Alonzo Tredwell",
+      "pos": "RHP",
+      "mlbid": 696280,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 26,
+      "name": "Gabel Pentecost",
+      "pos": "RHP",
+      "mlbid": 834872,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 27,
+      "name": "Sami Manzueta",
+      "pos": "2B",
+      "mlbid": 832795,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 28,
+      "name": "Nick Monistere",
+      "pos": "INF",
+      "mlbid": 823809,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 29,
+      "name": "Ryan Forcucci",
+      "pos": "RHP",
+      "mlbid": 801573,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": 30,
+      "name": "Jase Mitchell",
+      "pos": "C",
+      "mlbid": 834234,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": null,
+      "name": "Hudson Leach",
+      "pos": "RHP",
+      "mlbid": 813865,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": null,
+      "name": "Ramsey David",
+      "pos": "RHP",
+      "mlbid": 687062,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    }
+  ]
+}
