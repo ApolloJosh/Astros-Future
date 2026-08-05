@@ -22,6 +22,22 @@ const OUT_DIR = path.join(ROOT, 'docs', 'data');
 const CACHE_FILE = path.join(ROOT, 'data-sources', 'cache.json');
 const POOLS_FILE = path.join(ROOT, 'data-sources', 'pools.json');
 
+const PHOTO_DIR = path.join(ROOT, 'docs', 'assets', 'photos');
+
+// Custom headshots. MLB has no photo for most 17-year-olds in the DSL, so a
+// file named <mlbid>.jpg|png|webp dropped in docs/assets/photos wins over the
+// MLB CDN. Same-origin, so it also stays safe to draw on the share card.
+function photoOverrides() {
+  const map = {};
+  try {
+    fs.readdirSync(PHOTO_DIR).forEach(f => {
+      const m = /^(\d+)\.(jpe?g|png|webp)$/i.exec(f);
+      if (m) map[m[1]] = 'assets/photos/' + f;
+    });
+  } catch (e) { /* folder is optional */ }
+  return map;
+}
+
 const LVL_OF_SPORT = { 11: 'AAA', 12: 'AA', 13: 'A+', 14: 'A', 16: 'Rk', 1: 'MLB' };
 const readJSON = (f, dflt) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return dflt; } };
 
@@ -71,6 +87,9 @@ async function isGraduated(id, pitcher) {
 (async () => {
   const rankings = await loadRankings();
   const cache = readJSON(CACHE_FILE, { players: {} });
+  const photos = photoOverrides();
+  const nPhotos = Object.keys(photos).length;
+  if (nPhotos) console.log(`custom photos: ${nPhotos}`);
 
   // ---- resolve missing MLB ids by name (org-scoped when possible) ----
   for (const pr of rankings.prospects) {
@@ -142,6 +161,7 @@ async function isGraduated(id, pitcher) {
     // human-owned fields land last so the sheet always wins
     rec.rank = pr.rank;
     rec.hm = pr.rank == null;
+    rec.photo = (id && photos[id]) || null;
     rec.eta = pr.eta || CFG.etaAuto[rec.lvl] || null;
     rec.pipelineRank = pr.pipelineRank ?? null;
     rec.article = pr.article || null;
