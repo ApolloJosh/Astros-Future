@@ -20,6 +20,7 @@ const { milbPercentiles } = require('./fetch-milb');
 const ROOT = path.join(__dirname, '..');
 const OUT_DIR = path.join(ROOT, 'docs', 'data');
 const CACHE_FILE = path.join(ROOT, 'data-sources', 'cache.json');
+const POOLS_FILE = path.join(ROOT, 'data-sources', 'pools.json');
 
 const LVL_OF_SPORT = { 11: 'AAA', 12: 'AA', 13: 'A+', 14: 'A', 16: 'Rk', 1: 'MLB' };
 const readJSON = (f, dflt) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return dflt; } };
@@ -147,12 +148,35 @@ async function isGraduated(id, pitcher) {
     players.push(rec);
   }
 
+  // ---- versioned link pools ----
+  // Share codes encode positions in a fixed id list, not raw MLB ids, which is
+  // what makes them short. That list therefore has to be frozen: when the owner
+  // adds or drops a player the ids shift, and every previously shared link would
+  // silently decode to the wrong 30. So each distinct roster gets a version, and
+  // old versions are kept forever — a link made last month still resolves
+  // against the pool it was made with.
+  // A version also pins the owner's own order, because the short scheme stores
+  // "what differs from his list" — if his list changes, the same bits mean
+  // something new. Both halves are therefore frozen together.
+  const linkPools = readJSON(POOLS_FILE, []);
+  const currentIds = players.map(p => p.id).filter(Boolean).sort((a, b) => a - b);
+  const currentDef = players.filter(p => !p.hm && p.rank != null)
+    .sort((a, b) => a.rank - b.rank).map(p => p.id);
+  const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+  const latest = linkPools[linkPools.length - 1];
+  if (!latest || !eq(latest.ids, currentIds) || !eq(latest.def, currentDef)) {
+    linkPools.push({ v: linkPools.length, ids: currentIds, def: currentDef });
+    console.log(`link pool v${linkPools.length - 1} created (${currentIds.length} players)`);
+  }
+  fs.writeFileSync(POOLS_FILE, JSON.stringify(linkPools));
+
   const out = {
     updated: new Date().toISOString(), season: CFG.season,
     source: 'MLB Stats API — percentiles computed in-house, per level',
     floors: { poolPA: CFG.poolPA, poolIP: CFG.poolIP, displayPA: CFG.displayPA, displayIP: CFG.displayIP },
     pools: (milb && milb.pools) || [],
     labels: (milb && milb.labels) || null,
+    linkPools,
     players,
   };
 
