@@ -15,7 +15,8 @@
 <body>
 <div class="wrap">
   <header class="mast">
-    <img class="logo" src="https://astrosfuture.com/wp-content/uploads/2016/04/AF-logo-1.png" alt="Astros Future" onerror="this.style.display='none'">
+    <img class="logo" src="assets/af-logo.png" alt="Astros Future"
+         onerror="this.onerror=null;this.src='https://astrosfuture.com/wp-content/uploads/2016/04/AF-logo-1.png'">
     <div class="mast-txt">
       <h1>Top 30 <em>Prospects</em></h1>
       <p class="tag">The Astros Future rankings — drag to build <b>your</b> Top 30, then share it.</p>
@@ -27,19 +28,17 @@
     You're viewing someone's custom Top 30. <button id="adopt" class="btn sm">Remix it</button>
     <a href="#" id="see-default" class="lnk">See the Astros Future list</a>
   </div>
+  <div id="stale-banner" class="shared-banner stale" hidden>
+    That share link was made from an older version of the rankings, so it can't be rebuilt.
+    Showing the current Astros Future Top 30 instead.
+  </div>
 
   <div class="toolbar">
     <span class="hint">☰ Drag rows to reorder · tap a player for stats</span>
     <span class="toolbtns">
-      <button id="share" class="btn primary">Share my list</button>
-      <button id="png" class="btn">Download PNG</button>
+      <button id="share" class="btn primary big">SHARE</button>
       <button id="reset" class="btn ghost" hidden>Reset</button>
     </span>
-  </div>
-  <div id="share-out" class="share-out" hidden>
-    <input id="share-url" readonly aria-label="Share link">
-    <button id="copy" class="btn sm primary">Copy</button>
-    <span id="copied" class="copied" hidden>Copied ✓</span>
   </div>
 
   <ol id="list" class="list"></ol>
@@ -47,6 +46,22 @@
   <h2 class="hm-hd">Honorable Mentions</h2>
   <p class="hm-sub">On the radar but outside the 30. Think one belongs? Promote him into your list.</p>
   <ol id="hm" class="list hm"></ol>
+
+  <div id="sm" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-label="Share your Top 30">
+      <button id="sm-close" class="modal-x" aria-label="Close">×</button>
+      <h2 class="modal-hd">Share your Top 30</h2>
+      <div id="sm-status" class="sm-status">Building your card…</div>
+      <img id="sm-img" class="sm-img" alt="Your Astros Top 30 card" hidden>
+      <p id="sm-hint" class="sm-hint"></p>
+      <a id="sm-dl" class="sm-dl" href="#" download="my-astros-top-30.png">or download the image</a>
+      <div class="sm-link">
+        <input id="share-url" readonly aria-label="Share link">
+        <button id="copy" class="btn sm primary">Copy</button>
+      </div>
+      <span id="copied" class="copied" hidden>Copied ✓</span>
+    </div>
+  </div>
 
   <footer class="foot">
     <p>Rankings &amp; scouting reports by <a href="https://astrosfuture.com" target="_blank" rel="noopener">Astros Future</a>.
