@@ -288,6 +288,51 @@
       "eta": null,
       "pipelineRank": null,
       "article": null
+    },
+    {
+      "rank": null,
+      "name": "Logan Hughes",
+      "pos": "OF",
+      "mlbid": 813314,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": null,
+      "name": "Jack Radel",
+      "pos": "RHP",
+      "mlbid": 806481,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": null,
+      "name": "Wes Mendes",
+      "pos": "LHP",
+      "mlbid": 803544,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": null,
+      "name": "Keon Johnson",
+      "pos": "SS",
+      "mlbid": 828801,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
+    },
+    {
+      "rank": null,
+      "name": "Kam Durnin",
+      "pos": "SS",
+      "mlbid": 806494,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
     }
   ]
 }
