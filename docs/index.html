@@ -31,10 +31,14 @@
   <div class="toolbar">
     <span class="hint">☰ Drag rows to reorder · tap a player for stats</span>
     <span class="toolbtns">
+      <input id="uname" class="uname" type="text" maxlength="22" autocomplete="name"
+             placeholder="Your name" aria-label="Your name, shown on your list">
       <button id="share" class="btn primary big">SHARE</button>
       <button id="reset" class="btn ghost" hidden>Reset</button>
     </span>
   </div>
+
+  <h2 id="list-title" class="list-title">Astros Future Top 30</h2>
 
   <ol id="list" class="list"></ol>
 
