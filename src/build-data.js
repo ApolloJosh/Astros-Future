@@ -71,6 +71,102 @@ function bioFrom(person) {
   };
 }
 
+// Career history, level by level. A player promoted mid-season shows up once
+// per level, which is exactly the breakdown worth showing.
+const HIST_LEVELS = [[1, 'MLB'], [11, 'AAA'], [12, 'AA'], [13, 'A+'], [14, 'A'], [16, 'Rk']];
+const LEVEL_ORDER = { MLB: 6, AAA: 5, AA: 4, 'A+': 3, A: 2, Rk: 1 };
+const n = v => { const x = parseFloat(v); return isNaN(x) ? 0 : x; };
+const outsOf = v => { const x = parseFloat(v); if (isNaN(x)) return 0; const w = Math.floor(x); return w * 3 + Math.round((x - w) * 10); };
+const d3 = v => (isFinite(v) ? v.toFixed(3).replace(/^0\./, '.') : '—');
+const d2 = v => (isFinite(v) ? v.toFixed(2) : '—');
+const outsToIp = o => Math.floor(o / 3) + '.' + (o % 3);
+
+// Pure half, so the career arithmetic can be tested without the network.
+// `entries` is [{ lvl, splits }] straight off the API.
+function historyFrom(entries, pitcher) {
+  const rows = [];
+  const tot = {};
+  for (const { lvl, splits } of entries) {
+    (splits || []).forEach(s => {
+      const t = s.stat || {};
+      const team = (s.team && s.team.name) || '';
+      if (pitcher) {
+        const outs = outsOf(t.inningsPitched);
+        if (!outs && !n(t.gamesPlayed)) return;
+        rows.push({
+          y: s.season, lvl, team,
+          g: n(t.gamesPlayed), gs: n(t.gamesStarted), ip: t.inningsPitched || '0.0',
+          era: t.era || '—', whip: t.whip || '—', k: n(t.strikeOuts), bb: n(t.baseOnBalls),
+        });
+        tot.outs = (tot.outs || 0) + outs;
+        tot.er = (tot.er || 0) + n(t.earnedRuns);
+        tot.h = (tot.h || 0) + n(t.hits);
+        tot.bb = (tot.bb || 0) + n(t.baseOnBalls);
+        tot.k = (tot.k || 0) + n(t.strikeOuts);
+        tot.g = (tot.g || 0) + n(t.gamesPlayed);
+      } else {
+        const pa = n(t.plateAppearances);
+        if (!pa) return;
+        rows.push({
+          y: s.season, lvl, team,
+          g: n(t.gamesPlayed), pa,
+          avg: t.avg || '—', obp: t.obp || '—', slg: t.slg || '—', ops: t.ops || '—',
+          hr: n(t.homeRuns), sb: n(t.stolenBases), bb: n(t.baseOnBalls), k: n(t.strikeOuts),
+        });
+        tot.pa = (tot.pa || 0) + pa;
+        tot.ab = (tot.ab || 0) + n(t.atBats);
+        tot.h = (tot.h || 0) + n(t.hits);
+        tot.tb = (tot.tb || 0) + n(t.totalBases);
+        tot.bb = (tot.bb || 0) + n(t.baseOnBalls);
+        tot.hbp = (tot.hbp || 0) + n(t.hitByPitch);
+        tot.sf = (tot.sf || 0) + n(t.sacFlies);
+        tot.hr = (tot.hr || 0) + n(t.homeRuns);
+        tot.sb = (tot.sb || 0) + n(t.stolenBases);
+        tot.k = (tot.k || 0) + n(t.strikeOuts);
+        tot.g = (tot.g || 0) + n(t.gamesPlayed);
+      }
+    });
+  }
+  if (!rows.length) return null;
+  // Newest first, and within a season the highest level first — that reads the
+  // way a promotion actually happened.
+  rows.sort((a, b) => (b.y - a.y) || (LEVEL_ORDER[b.lvl] - LEVEL_ORDER[a.lvl]));
+  // Rate stats are recomputed from components; averaging the seasons would be
+  // wrong whenever playing time is uneven.
+  let career;
+  if (pitcher) {
+    const ip = tot.outs / 3;
+    career = {
+      kind: 'P', seasons: new Set(rows.map(r => r.y)).size, g: tot.g, ip: outsToIp(tot.outs),
+      era: d2(tot.outs ? tot.er * 27 / tot.outs : NaN),
+      whip: d2(tot.outs ? (tot.h + tot.bb) * 3 / tot.outs : NaN),
+      k: tot.k, bb: tot.bb, k9: d2(ip ? tot.k * 9 / ip : NaN),
+    };
+  } else {
+    const obpDen = tot.ab + tot.bb + tot.hbp + tot.sf;
+    career = {
+      kind: 'H', seasons: new Set(rows.map(r => r.y)).size, g: tot.g, pa: tot.pa,
+      avg: d3(tot.ab ? tot.h / tot.ab : NaN),
+      obp: d3(obpDen ? (tot.h + tot.bb + tot.hbp) / obpDen : NaN),
+      slg: d3(tot.ab ? tot.tb / tot.ab : NaN),
+      ops: d3(tot.ab && obpDen ? (tot.h + tot.bb + tot.hbp) / obpDen + tot.tb / tot.ab : NaN),
+      hr: tot.hr, sb: tot.sb, bb: tot.bb, k: tot.k,
+    };
+  }
+  return { rows, career };
+}
+
+async function fetchHistory(id, pitcher) {
+  const group = pitcher ? 'pitching' : 'hitting';
+  // Six levels in parallel — api.get() has its own concurrency limit, so this
+  // stays polite while turning ~90s of serial waiting into a few seconds.
+  const entries = await Promise.all(HIST_LEVELS.map(async ([sportId, lvl]) => {
+    const d = await api.yearByYear(id, group, sportId);
+    return { lvl, splits: (d && d.stats && d.stats[0] && d.stats[0].splits) || [] };
+  }));
+  return historyFrom(entries, pitcher);
+}
+
 // Rookie limits: > 130 MLB at-bats or > 50 MLB innings pitched.
 async function isGraduated(id, pitcher) {
   const d = await api.careerStats(id, pitcher);
@@ -83,6 +179,11 @@ async function isGraduated(id, pitcher) {
   }
   return (t.atBats || 0) > 130;
 }
+
+module.exports = { historyFrom };   // for tests
+
+// Running as a script rather than being required by the test harness.
+if (require.main !== module) return;
 
 (async () => {
   const rankings = await loadRankings();
@@ -136,6 +237,11 @@ async function isGraduated(id, pitcher) {
       // rather than blanking the marquee feature for a day.
       const keep = (!m && cache.players[id]) || null;
       const s = m || keep || {};
+      let hist = null;
+      try { hist = await fetchHistory(id, pitcher); } catch (e) { /* fall through to cache */ }
+      if (!hist && cache.players[id] && cache.players[id].history) {
+        hist = { rows: cache.players[id].history, career: cache.players[id].career };
+      }
       rec = {
         id, name: pr.name, pos: pr.pos || bio.posApi,
         age: bio.age, birthDate: bio.birthDate, birthPlace: bio.birthPlace,
@@ -149,6 +255,8 @@ async function isGraduated(id, pitcher) {
         v: s.v || null, p: s.p || null,
         comp: s.comp || null, agg: s.agg ?? null,
         score: s.score ?? null, poolN: s.poolN || null,
+        history: (hist && hist.rows) || null,
+        career: (hist && hist.career) || null,
       };
       cache.players[id] = rec; // remember the good fetch
     } else if (id && cache.players[id]) {
