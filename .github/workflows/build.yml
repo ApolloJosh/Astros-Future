@@ -13,9 +13,14 @@ permissions:
   pages: write
   id-token: write
 
+# Uploading files one at a time through the GitHub web UI makes one commit —
+# and one run — per file. With queuing, six uploads meant six deployments
+# lining up behind each other and the later ones timed out waiting their turn.
+# Superseding runs instead is safe here because every run rebuilds the same
+# final state from scratch, so the last one to finish is the one that matters.
 concurrency:
-  group: build
-  cancel-in-progress: false
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -33,7 +38,7 @@ jobs:
         run: |
           git config user.name astros-future-bot
           git config user.email actions@github.com
-          git add docs/data data-sources/rankings.json data-sources/cache.json || true
+          git add docs/data data-sources/rankings.json data-sources/cache.json data-sources/pools.json || true
           git diff --cached --quiet || git commit -m 'data refresh'
           git push || echo 'push skipped'
       - name: Upload site
@@ -49,3 +54,5 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          timeout: 1200000   # 20 min; the 10-min default was being hit
