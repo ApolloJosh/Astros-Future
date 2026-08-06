@@ -216,9 +216,26 @@
   function sampleTxt(p) {
     return p.kind === 'H' ? (p.pa != null ? p.pa + ' PA' : null) : (p.ip != null ? p.ip + ' IP' : null);
   }
+  // "?" explainer. Composites differ for hitters and pitchers, so the panel
+  // only describes the ones actually on screen.
+  function helpHTML(kind) {
+    const comps = kind === 'P'
+      ? `<b>Run prevention</b> is ERA, WHIP and H/9; <b>Stuff</b> is K/9 and K%; <b>Control</b> is BB/9, BB%, K/BB and Strike%.`
+      : `<b>Production</b> is OPS, OBP and AVG; <b>Power</b> is SLG, ISO and HR%; <b>Discipline</b> is BB% and K%.`;
+    return `<span class="help">` +
+      `<button class="help-btn" type="button" aria-expanded="false" aria-label="How these numbers are calculated">?</button>` +
+      `<span class="help-pop" role="tooltip">` +
+        `<b class="help-hd">How these are calculated</b>` +
+        `<p>Every stat becomes a percentile against players <em>at the same level</em> — 80 means better than 80% of that level. A .800 OPS means something very different in Rookie ball than at Triple-A, so that's the only fair comparison. Stats where lower is better (K%, ERA, WHIP, walks) are flipped, so high is always good.</p>` +
+        `<p><b>Prospect score</b> — his average across every stat, weighted 80%, plus Young for level at 20%.</p>` +
+        `<p><b>Young for level</b> — his age percentile, flipped: 100 means he's the youngest at his level. Holding your own against older competition counts for something.</p>` +
+        `<p>${comps} Each is just the average of those percentiles.</p>` +
+        `<p class="help-note">These come from traditional stats, not Statcast — MLB doesn't publish exit velocity or chase rate for the minors. There's no park or league adjustment beyond level, and short samples are flagged above. It's a performance snapshot, not a scouting grade.</p>` +
+      `</span></span>`;
+  }
   function pctSection(p) {
     const sample = sampleTxt(p);
-    const hd = (extra) => `<div class="pct-hd">Percentiles <span class="sub">${esc(p.lvl || '')}${sample ? ' · ' + sample : ''}${extra || ''}</span></div>`;
+    const hd = (extra) => `<div class="pct-hd">Percentiles <span class="sub">${esc(p.lvl || '')}${sample ? ' · ' + sample : ''}${extra || ''}</span>${helpHTML(p.kind)}</div>`;
     if (!p.line) {
       return hd() + `<div class="empty-note">No 2026 game action yet${p.il ? ' — currently on the ' + esc(p.il) : ''}.</div>`;
     }
@@ -320,6 +337,23 @@
       order.push(id);
       save(); render();
       return;
+    }
+    const help = e.target.closest('.help-btn');
+    if (help) {
+      e.stopPropagation();
+      const box = help.parentElement, open = box.classList.toggle('on');
+      help.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.querySelectorAll('.help.on').forEach(o => {
+        if (o !== box) { o.classList.remove('on'); o.querySelector('.help-btn').setAttribute('aria-expanded', 'false'); }
+      });
+      sendHeight();
+      return;
+    }
+    // a click anywhere else closes an open explainer
+    if (!e.target.closest('.help-pop')) {
+      document.querySelectorAll('.help.on').forEach(o => {
+        o.classList.remove('on'); o.querySelector('.help-btn').setAttribute('aria-expanded', 'false');
+      });
     }
     const main = e.target.closest('.row-main');
     if (main && !e.target.closest('.grip')) {
