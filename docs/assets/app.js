@@ -139,6 +139,18 @@
   let order = [];        // visitor's 30 (ids)
   let viewingShared = false;
   let staleLink = false; // a code we couldn't resolve — say so rather than fake it
+  let uname = '';        // whose list this is, if they say
+
+  const LS_NAME = 'af30-name-v1';
+  // Names travel in URLs and get drawn on a canvas, so strip anything that
+  // isn't plain text and keep it short enough to fit the card.
+  const cleanName = s => String(s == null ? '' : s).replace(/[^\p{L}\p{M}\p{N} '\u2019.\-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 22);
+  const possessive = n => n + (/s$/i.test(n) ? '’' : '’s');
+  const listTitle = () => uname ? `${possessive(uname)} Astros Top 30` : 'Astros Future Top 30';
+  function paintTitle() {
+    $('#list-title').textContent = listTitle();
+    document.title = uname ? listTitle() : 'Astros Future — Top 30 Prospects';
+  }
 
   function normalize(ids) {
     const seen = new Set();
@@ -155,6 +167,12 @@
 
   function load() {
     const qs = new URLSearchParams(location.search);
+    // A name in the URL belongs to whoever shared it — show it, but never let
+    // it overwrite the name this visitor saved for themselves.
+    const urlName = cleanName(qs.get('n'));
+    if (urlName) uname = urlName;
+    else { try { uname = cleanName(localStorage.getItem(LS_NAME)); } catch (e) { uname = ''; } }
+    $('#uname').value = uname;
     const code = qs.get('l');
     if (code) {
       const dec = decode(code);
@@ -244,8 +262,12 @@
     return h;
   }
   function detail(p) {
-    const draftTxt = p.draft && p.draft.round
-      ? `Drafted ${p.draft.year} · Round ${p.draft.round}, Pick ${p.draft.pick}`
+    // Comp rounds come through as codes like "PPI" or "4C", not numbers.
+    const dr = p.draft;
+    const draftTxt = dr && dr.round
+      ? (/^\d+$/.test(String(dr.round))
+        ? `Drafted ${dr.year} · Round ${dr.round}, Pick ${dr.pick}`
+        : `Drafted ${dr.year} · Comp Pick ${dr.pick}`)
       : (p.draftYear ? 'Drafted ' + p.draftYear : 'Int’l signing');
     const bits = [p.bt ? 'B/T ' + p.bt : null, p.ht, p.wt ? p.wt + ' lbs' : null,
       p.birthPlace, draftTxt, p.club].filter(Boolean);
@@ -282,8 +304,9 @@
   function render() {
     $('#list').innerHTML = order.map((id, i) => rowHTML(byId.get(id), i, false)).join('');
     $('#hm').innerHTML = hmPool().map(id => rowHTML(byId.get(id), 0, true)).join('');
-    $('#reset').hidden = isDefault() && !localStorage.getItem(LS_KEY);
+    $('#reset').hidden = isDefault() && !localStorage.getItem(LS_KEY) && !uname;
     $('#stale-banner').hidden = !staleLink;
+    paintTitle();
     sendHeight();
   }
 
@@ -362,11 +385,22 @@
   function shareURL() {
     const base = location.origin === 'null' || location.protocol === 'file:'
       ? location.href.split('?')[0] : location.origin + location.pathname;
-    if (isDefault()) return base;
-    const code = encode(order);
-    // Long-form ids remain the safety net if a player isn't in the pool yet.
-    return code ? base + '?l=' + code : base + '?list=' + order.join('.');
+    const parts = [];
+    if (!isDefault()) {
+      const code = encode(order);
+      // Long-form ids remain the safety net if a player isn't in the pool yet.
+      parts.push(code ? 'l=' + code : 'list=' + order.join('.'));
+    }
+    if (uname) parts.push('n=' + encodeURIComponent(uname));
+    return parts.length ? base + '?' + parts.join('&') : base;
   }
+  $('#uname').addEventListener('input', e => {
+    claimIfShared();                     // naming it makes it yours
+    uname = cleanName(e.target.value);
+    try { uname ? localStorage.setItem(LS_NAME, uname) : localStorage.removeItem(LS_NAME); } catch (err) {}
+    paintTitle();
+    $('#reset').hidden = isDefault() && !localStorage.getItem(LS_KEY) && !uname;
+  });
   const isTouch = typeof matchMedia === 'function' && matchMedia('(hover: none)').matches;
   function openShare() {
     $('#share-url').value = shareURL();
@@ -400,8 +434,9 @@
   }
 
   $('#reset').addEventListener('click', () => {
-    try { localStorage.removeItem(LS_KEY); } catch (e) {}
-    viewingShared = false;
+    try { localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_NAME); } catch (e) {}
+    viewingShared = false; staleLink = false;
+    uname = ''; $('#uname').value = '';
     history.replaceState(null, '', location.pathname);
     order = defaultOrder.slice();
     render();
@@ -459,8 +494,17 @@
       x.fillText('ASTROS FUTURE', 40, 120);
     }
     x.textAlign = 'right';
-    x.fillStyle = '#fff'; x.font = '900 46px Roboto, sans-serif';
-    x.fillText(isDefault() ? 'TOP 30 PROSPECTS' : 'MY TOP 30', W - 44, 104);
+    // The name can be long, so shrink the headline until it clears the logo.
+    const title = uname ? (possessive(uname) + ' Top 30').toUpperCase()
+      : (isDefault() ? 'TOP 30 PROSPECTS' : 'MY TOP 30');
+    let fs = 46;
+    const maxTitleW = W - 44 - (38 + (logo ? 142 : 320) + 30);
+    x.font = `900 ${fs}px Roboto, sans-serif`;
+    while (x.measureText(title).width > maxTitleW && fs > 22) {
+      fs -= 2; x.font = `900 ${fs}px Roboto, sans-serif`;
+    }
+    x.fillStyle = '#fff';
+    x.fillText(title, W - 44, 104);
     x.font = '400 22px Roboto, sans-serif'; x.fillStyle = '#c9d4e4';
     x.fillText(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), W - 44, 146);
 
