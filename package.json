@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "node src/build-data.js",
-    "test": "node test/percentile.test.js && node test/rankings.test.js"
+    "test": "node test/percentile.test.js && node test/rankings.test.js && node test/history.test.js && node test/sharecode.test.js && node test/dom.test.js"
   },
   "engines": {
     "node": ">=20"
