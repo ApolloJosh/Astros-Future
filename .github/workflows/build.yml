@@ -2,7 +2,7 @@ name: Build data & deploy
 
 on:
   schedule:
-    - cron: "0 11 * * *"    # daily ~6am CT
+    - cron: "0 11,23 * * *"   # ~6am and ~6pm CT, so evening box scores land the same night
   workflow_dispatch: {}
   push:
     branches: [main]
