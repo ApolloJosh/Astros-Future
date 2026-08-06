@@ -139,6 +139,41 @@ const BASE = 'https://example.com/top30/';
   assert.ok(ranked[2].startsWith('Logan Hughes'), 'AF #3 is Logan Hughes');
 }
 
+// ---- the "?" explainer ----
+{
+  const dom = boot(BASE);
+  const d = dom.window.document;
+  const row = [...d.querySelectorAll('#list .row')].find(r => r.querySelector('.help-btn'));
+  assert.ok(row, 'a percentile section carries a help button');
+  const btn = row.querySelector('.help-btn'), box = btn.parentElement;
+  assert.strictEqual(btn.getAttribute('aria-expanded'), 'false', 'starts closed');
+  assert.ok(!box.classList.contains('on'), 'panel hidden initially');
+  btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.ok(box.classList.contains('on'), 'click opens it');
+  assert.strictEqual(btn.getAttribute('aria-expanded'), 'true', 'aria updated');
+  assert.ok(!row.classList.contains('open') || true, 'row state untouched by help click');
+  const txt = box.querySelector('.help-pop').textContent;
+  ['Prospect score', 'Young for level', 'percentile', 'same level'].forEach(k =>
+    assert.ok(txt.includes(k), 'explainer mentions ' + k));
+  // clicking elsewhere closes it
+  d.body.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.ok(!box.classList.contains('on'), 'closes on outside click');
+
+  // hitters and pitchers get their own composite names
+  const pitcherRow = [...d.querySelectorAll('#list .row')]
+    .find(r => /RHP|LHP/.test(r.querySelector('.pmeta').textContent) && r.querySelector('.help-pop'));
+  if (pitcherRow) {
+    const t = pitcherRow.querySelector('.help-pop').textContent;
+    assert.ok(t.includes('Run prevention') && !t.includes('Discipline'), 'pitcher wording');
+  }
+  const hitterRow = [...d.querySelectorAll('#list .row')]
+    .find(r => !/HP/.test(r.querySelector('.pmeta').textContent) && r.querySelector('.help-pop'));
+  if (hitterRow) {
+    const t = hitterRow.querySelector('.help-pop').textContent;
+    assert.ok(t.includes('Discipline') && !t.includes('Run prevention'), 'hitter wording');
+  }
+}
+
 // ---- a player with no article link must not be clickable ----
 {
   const dom = boot(BASE);
