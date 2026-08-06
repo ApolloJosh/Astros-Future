@@ -278,6 +278,40 @@
     else if (p.mlbDebut) h += `<span class="chip debut">MLB Debut</span>`;
     return h;
   }
+  // Career totals, recomputed from components at build time rather than
+  // averaged across seasons.
+  function careerHTML(p) {
+    const c = p.career;
+    if (!c) return '';
+    const yrs = c.seasons + (c.seasons === 1 ? ' season' : ' seasons');
+    const line = c.kind === 'P'
+      ? `${c.era} ERA · ${c.whip} WHIP · ${c.k} K · ${c.ip} IP`
+      : `${c.avg} AVG · ${c.ops} OPS · ${c.hr} HR · ${c.sb} SB`;
+    return `<div class="career"><span class="career-tag">Career</span>${esc(line)}` +
+      `<span class="career-sub">${esc(yrs)} · ${c.g} G</span></div>`;
+  }
+  // Every season at every level. A mid-season call-up gets one row per level,
+  // newest first, so you can see what he did before and after the promotion.
+  function historyHTML(p) {
+    const rows = p.history;
+    if (!rows || rows.length < 2) return '';
+    const pitcher = (p.career && p.career.kind === 'P') || p.kind === 'P';
+    const head = pitcher
+      ? ['Year', 'Lvl', 'Club', 'G', 'GS', 'IP', 'ERA', 'WHIP', 'K', 'BB']
+      : ['Year', 'Lvl', 'Club', 'G', 'PA', 'AVG', 'OBP', 'SLG', 'OPS', 'HR', 'SB'];
+    const body = rows.map(r => {
+      const cells = pitcher
+        ? [r.y, r.lvl, r.team, r.g, r.gs, r.ip, r.era, r.whip, r.k, r.bb]
+        : [r.y, r.lvl, r.team, r.g, r.pa, r.avg, r.obp, r.slg, r.ops, r.hr, r.sb];
+      return '<tr>' + cells.map((c, i) =>
+        `<td${i === 2 ? ' class="club"' : ''}>${esc(c == null ? '—' : c)}</td>`).join('') + '</tr>';
+    }).join('');
+    return `<button class="hist-toggle" type="button" aria-expanded="false">` +
+      `<span class="hist-caret">▶</span> Full stat history <span class="hist-n">${rows.length} stops</span></button>` +
+      `<div class="hist" hidden><table><thead><tr>` +
+      head.map(h => `<th>${h}</th>`).join('') +
+      `</tr></thead><tbody>${body}</tbody></table></div>`;
+  }
   function detail(p) {
     // Comp rounds come through as codes like "PPI" or "4C", not numbers.
     const dr = p.draft;
@@ -291,9 +325,10 @@
     const season = p.line
       ? `<div class="season"><span class="lvl-tag">${esc(p.lvl || '—')}</span>${esc(p.line)}</div>`
       : `<div class="season"><span class="lvl-tag">2026</span>No game action yet</div>`;
+    const stats = `<div class="stats-block">${season}${careerHTML(p)}${historyHTML(p)}</div>`;
     const article = p.article
       ? `<a class="report-lnk" href="${esc(p.article)}" target="_blank" rel="noopener">Read the full ${esc(p.name)} scouting report →</a>` : '';
-    return `<div class="bio">${esc(bits.join(' · '))}</div>` + season + pctSection(p) + article;
+    return `<div class="bio">${esc(bits.join(' · '))}</div>` + stats + pctSection(p) + article;
   }
   function rowHTML(p, i, hm) {
     const rankCell = hm ? `<span class="rank">HM</span>` : `<span class="rank">${i + 1}</span>`;
@@ -337,6 +372,20 @@
       order.push(id);
       save(); render();
       return;
+    }
+    // Clicking the stat lines, or the toggle itself, opens the full history.
+    const statBlock = e.target.closest('.stats-block');
+    if (statBlock && !e.target.closest('.hist')) {
+      const btn = statBlock.querySelector('.hist-toggle');
+      if (btn) {
+        e.stopPropagation();
+        const box = statBlock.querySelector('.hist');
+        box.hidden = !box.hidden;
+        btn.setAttribute('aria-expanded', box.hidden ? 'false' : 'true');
+        btn.classList.toggle('on', !box.hidden);
+        sendHeight();
+        return;
+      }
     }
     const help = e.target.closest('.help-btn');
     if (help) {
