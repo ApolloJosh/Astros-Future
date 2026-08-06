@@ -139,6 +139,83 @@ const BASE = 'https://example.com/top30/';
   assert.ok(ranked[2].startsWith('Logan Hughes'), 'AF #3 is Logan Hughes');
 }
 
+// ---- career line + full stat history dropdown ----
+{
+  const career = { kind: 'H', seasons: 2, g: 75, pa: 300, avg: '.267', obp: '.327',
+    slg: '.433', ops: '.760', hr: 8, sb: 15, bb: 23, k: 60 };
+  const history = [
+    { y: '2026', lvl: 'AA', team: 'Corpus Christi Hooks', g: 25, pa: 100, avg: '.300', obp: '.360', slg: '.500', ops: '.860', hr: 3, sb: 5 },
+    { y: '2026', lvl: 'A+', team: 'Asheville Tourists', g: 50, pa: 200, avg: '.250', obp: '.310', slg: '.400', ops: '.710', hr: 5, sb: 10 },
+    { y: '2025', lvl: 'A', team: 'Fayetteville Woodpeckers', g: 40, pa: 160, avg: '.240', obp: '.300', slg: '.380', ops: '.680', hr: 2, sb: 8 },
+  ];
+  const patched = dataJs.replace('"article":null',
+    `"article":null,"career":${JSON.stringify(career)},"history":${JSON.stringify(history)}`);
+  const dom = new JSDOM(html, { url: BASE, runScripts: 'outside-only', pretendToBeVisual: true });
+  dom.window.eval(patched); dom.window.eval(appJs);
+  const d = dom.window.document;
+  const row = d.querySelector('#list .row');
+  row.classList.add('open');
+
+  const careerEl = row.querySelector('.career');
+  assert.ok(careerEl, 'career line rendered');
+  assert.ok(careerEl.textContent.includes('.267 AVG'), 'career rates shown');
+  assert.ok(careerEl.textContent.includes('2 seasons'), 'season count shown');
+  // career sits under the current season line
+  const kids = [...row.querySelector('.stats-block').children].map(e => e.className.split(' ')[0]);
+  assert.deepStrictEqual(kids.slice(0, 2), ['season', 'career'], 'season first, career beneath');
+
+  const box = row.querySelector('.hist'), btn = row.querySelector('.hist-toggle');
+  assert.ok(box.hidden, 'history starts collapsed');
+  assert.strictEqual(btn.getAttribute('aria-expanded'), 'false');
+
+  // clicking the stat lines opens it
+  row.querySelector('.season').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.ok(!box.hidden, 'clicking the stats opens the history');
+  assert.strictEqual(btn.getAttribute('aria-expanded'), 'true');
+  assert.ok(row.classList.contains('open'), 'the row itself stays open');
+
+  const trs = box.querySelectorAll('tbody tr');
+  assert.strictEqual(trs.length, 3, 'one row per season-level stop');
+  const first = [...trs[0].querySelectorAll('td')].map(t => t.textContent);
+  assert.deepStrictEqual(first.slice(0, 3), ['2026', 'AA', 'Corpus Christi Hooks'],
+    'year, level and club per row');
+  assert.ok([...box.querySelectorAll('th')].map(t => t.textContent).includes('OPS'), 'hitter columns');
+
+  // clicking again closes
+  row.querySelector('.season').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.ok(box.hidden, 'toggles shut');
+}
+
+// ---- pitchers get pitching columns ----
+{
+  const career = { kind: 'P', seasons: 2, g: 15, ip: '31.0', era: '3.77', whip: '1.29', k: 37, bb: 12, k9: '10.74' };
+  const history = [
+    { y: '2026', lvl: 'AAA', team: 'Sugar Land Space Cowboys', g: 5, gs: 2, ip: '10.1', era: '2.61', whip: '1.16', k: 12, bb: 4 },
+    { y: '2025', lvl: 'AA', team: 'Corpus Christi Hooks', g: 10, gs: 10, ip: '20.2', era: '4.35', whip: '1.35', k: 25, bb: 8 },
+  ];
+  const patched = dataJs.replace('"article":null',
+    `"article":null,"career":${JSON.stringify(career)},"history":${JSON.stringify(history)}`);
+  const dom = new JSDOM(html, { url: BASE, runScripts: 'outside-only', pretendToBeVisual: true });
+  dom.window.eval(patched); dom.window.eval(appJs);
+  const row = dom.window.document.querySelector('#list .row');
+  const heads = [...row.querySelectorAll('.hist th')].map(t => t.textContent);
+  assert.ok(heads.includes('ERA') && heads.includes('WHIP') && heads.includes('IP'), 'pitching columns');
+  assert.ok(!heads.includes('OPS'), 'no hitting columns for a pitcher');
+  assert.ok(row.querySelector('.career').textContent.includes('3.77 ERA'), 'career ERA shown');
+}
+
+// ---- one stop only: no dropdown worth opening ----
+{
+  const patched = dataJs.replace('"article":null',
+    `"article":null,"career":{"kind":"H","seasons":1,"g":25,"pa":100,"avg":".300","obp":".360","slg":".500","ops":".860","hr":3,"sb":5,"bb":8,"k":20},` +
+    `"history":[{"y":"2026","lvl":"AA","team":"Corpus Christi Hooks","g":25,"pa":100,"avg":".300","obp":".360","slg":".500","ops":".860","hr":3,"sb":5}]`);
+  const dom = new JSDOM(html, { url: BASE, runScripts: 'outside-only', pretendToBeVisual: true });
+  dom.window.eval(patched); dom.window.eval(appJs);
+  const row = dom.window.document.querySelector('#list .row');
+  assert.ok(row.querySelector('.career'), 'career still shown');
+  assert.ok(!row.querySelector('.hist-toggle'), 'no dropdown when there is only one stop');
+}
+
 // ---- the "?" explainer ----
 {
   const dom = boot(BASE);
