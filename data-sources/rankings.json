@@ -513,6 +513,15 @@
       "eta": null,
       "pipelineRank": null,
       "article": null
+    },
+    {
+      "rank": null,
+      "name": "Brett Gillis",
+      "pos": null,
+      "mlbid": null,
+      "eta": null,
+      "pipelineRank": null,
+      "article": null
     }
   ]
 }
