@@ -85,6 +85,26 @@ const BASE = 'https://example.com/top30/';
     'viewing a shared list does not clobber visitor storage');
 }
 
+// ---- the ETA/AF/MLB figures stay grouped so mobile can reflow them ----
+{
+  const dom = boot(BASE);
+  const row = dom.window.document.querySelector('#list .row');
+  const cells = row.querySelector('.cells');
+  assert.ok(cells, 'the figures live in one wrapper');
+  assert.strictEqual(cells.querySelectorAll('.cell').length, 3, 'ETA, AF and MLB');
+  assert.strictEqual(cells.parentElement.className, 'row-main', 'wrapper sits in the row');
+  // honorable mentions get the promote button instead
+  const hmRow = dom.window.document.querySelector('#hm .row');
+  assert.ok(!hmRow.querySelector('.cells') && hmRow.querySelector('.promote'), 'HM row unaffected');
+
+  const css = fs.readFileSync(path.join(root, 'docs', 'assets', 'style.css'), 'utf8');
+  const mobile = (css.match(/@media \(max-width: 560px\) \{[\s\S]*?\n\}/) || [''])[0];
+  assert.ok(/\.cells\s*\{[^}]*flex-basis:\s*100%/.test(mobile),
+    'on mobile the figures take a full line of their own');
+  assert.ok(!/\.cell\.pipe[^{]*\{\s*display:\s*none/.test(mobile),
+    'MLB rank is no longer dropped on mobile — there is room for it now');
+}
+
 // ---- the name field ----
 {
   const dom = boot(BASE);
