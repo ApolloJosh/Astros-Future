@@ -139,6 +139,37 @@ const BASE = 'https://example.com/top30/';
   assert.ok(ranked[2].startsWith('Logan Hughes'), 'AF #3 is Logan Hughes');
 }
 
+// ---- a just-promoted player: badge says where he is, stats say where they're from ----
+{
+  const base = JSON.parse(dataJs.replace(/^window\.AF_DATA = /, '').replace(/;\s*$/, ''));
+  const p = base.players[0];
+  p.kind = 'P'; p.pos = 'RHP';
+  p.club = 'Sugar Land Space Cowboys';
+  p.lvl = 'AAA';                       // promoted this week
+  p.statLvl = 'AA';                    // but the innings are all from AA
+  p.ip = '69.0'; p.pa = null;
+  p.line = '2.61 ERA · 1.13 WHIP · 100 K · 69.0 IP';
+  p.poolN = 96;
+  p.v = { era: 2.61, whip: 1.13, k9: 13.04 };
+  p.p = { era: 88, whip: 84, k9: 97, age: 40 };
+  const dom = new JSDOM(html, { url: BASE, runScripts: 'outside-only', pretendToBeVisual: true });
+  dom.window.eval('window.AF_DATA = ' + JSON.stringify(base) + ';');
+  dom.window.eval(appJs);
+  const row = dom.window.document.querySelector('#list .row');
+  row.classList.add('open');
+
+  assert.ok(row.querySelector('.pmeta').textContent.includes('AAA'),
+    'the badge by his name shows his current level, got: ' + row.querySelector('.pmeta').textContent);
+  assert.strictEqual(row.querySelector('.season .lvl-tag').textContent, 'AA',
+    'the season line is labelled with the level those stats came from');
+  assert.ok(row.querySelector('.pct-hd .sub').textContent.includes('AA'),
+    'percentile header names the level he was ranked against');
+  assert.ok(!row.querySelector('.pct-hd .sub').textContent.includes('AAA'),
+    'and not the level he just moved up to');
+  assert.ok(row.querySelector('.credit').textContent.includes('Ranked against AA only'),
+    'credit line agrees');
+}
+
 // ---- career line + full stat history dropdown ----
 {
   const career = { kind: 'H', seasons: 2, g: 75, pa: 300, avg: '.267', obp: '.327',
