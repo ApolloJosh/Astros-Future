@@ -649,12 +649,21 @@
   // ---------- iframe auto-height ----------
   function sendHeight() {
     if (window.parent === window) return;
-    requestAnimationFrame(() => {
+    const post = () => {
       try { parent.postMessage({ af30Height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
-    });
+    };
+    // Post immediately, THEN again after layout settles. The immediate call
+    // matters: requestAnimationFrame never fires while a page is hidden, so a
+    // visitor who opens the article in a background tab would otherwise come
+    // back to an iframe still stuck at its min-height.
+    post();
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(post);
   }
   if (window.ResizeObserver) new ResizeObserver(sendHeight).observe(document.body);
   addEventListener('load', sendHeight);
+  // Headshots and webfonts land after load and change the height.
+  [250, 1000, 3000].forEach(ms => setTimeout(sendHeight, ms));
+  document.addEventListener('visibilitychange', sendHeight);
 
   // ---------- boot ----------
   if (D.updated) $('#updated').textContent = 'Updated ' + new Date(D.updated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
