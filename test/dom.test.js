@@ -85,6 +85,42 @@ const BASE = 'https://example.com/top30/';
     'viewing a shared list does not clobber visitor storage');
 }
 
+// ---- shared links point at the host article, not the widget's own address ----
+{
+  const ARTICLE = 'https://astrosfuture.com/astros-top-prospects/';
+  const framed = (widgetUrl, fakeParent) => {
+    const d = new JSDOM(html, { url: widgetUrl, runScripts: 'outside-only', pretendToBeVisual: true });
+    if (fakeParent) Object.defineProperty(d.window, 'parent', { value: { postMessage() {} }, configurable: true });
+    d.window.eval(dataJs); d.window.eval(appJs);
+    return d;
+  };
+  const shareOf = dom => {
+    const d = dom.window.document;
+    d.querySelector('#hm .row [data-promote]').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    d.querySelector('#share').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    return d.querySelector('#share-url').value;
+  };
+
+  const embedded = framed(BASE + '?home=' + encodeURIComponent(ARTICLE), true);
+  const url = shareOf(embedded);
+  assert.ok(url.startsWith(ARTICLE + '?l='), 'link points at the article: ' + url);
+  assert.ok(!url.includes('github.io'), 'no trace of the widget address');
+  assert.ok(!url.includes('home='), 'the plumbing parameter is not passed along');
+
+  // standalone (not embedded) keeps using its own address
+  const solo = framed(BASE, false);
+  assert.ok(shareOf(solo).startsWith(BASE + '?l='), 'unembedded still shares its own url');
+
+  // a home value is only honoured inside a frame, and must be a real web address
+  const notFramed = framed(BASE + '?home=' + encodeURIComponent('https://evil.example/'), false);
+  assert.ok(!shareOf(notFramed).includes('evil.example'), 'ignored when not embedded');
+  ['javascript:alert(1)', 'not-a-url', ''].forEach(bad => {
+    const d = framed(BASE + '?home=' + encodeURIComponent(bad), true);
+    const u = shareOf(d);
+    assert.ok(u.startsWith(BASE), 'rejects unusable home value ' + JSON.stringify(bad) + ', got ' + u);
+  });
+}
+
 // ---- the ETA/AF/MLB figures stay grouped so mobile can reflow them ----
 {
   const dom = boot(BASE);
