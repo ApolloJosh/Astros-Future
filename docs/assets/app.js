@@ -335,11 +335,15 @@
   }
   function rowHTML(p, i, hm) {
     const rankCell = hm ? `<span class="rank">HM</span>` : `<span class="rank">${i + 1}</span>`;
+    // Grouped so narrow screens can drop the whole set onto its own line
+    // instead of starving the name column.
     const right = hm
       ? `<button class="promote" data-promote="${p.id}">↑ My 30</button>`
-      : `<span class="cell eta"><span class="lbl">ETA</span><span class="val">${esc(p.eta || '—')}</span></span>` +
+      : `<span class="cells">` +
+        `<span class="cell eta"><span class="lbl">ETA</span><span class="val">${esc(p.eta || '—')}</span></span>` +
         `<span class="cell af"><span class="lbl">AF</span><span class="val">#${p.rank ?? '—'}</span></span>` +
-        `<span class="cell pipe"><span class="lbl">MLB</span><span class="val">${p.pipelineRank ? '#' + p.pipelineRank : '—'}</span></span>`;
+        `<span class="cell pipe"><span class="lbl">MLB</span><span class="val">${p.pipelineRank ? '#' + p.pipelineRank : '—'}</span></span>` +
+        `</span>`;
     return `<li class="row ${hm ? 'hm-row' : ''}" data-id="${p.id}">
       <div class="row-main">
         <span class="grip" ${hm ? 'style="visibility:hidden"' : ''} title="Drag to reorder">⠿</span>
