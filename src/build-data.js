@@ -65,6 +65,7 @@ function bioFrom(person) {
     draft: dr ? { year: +dr.year || p.draftYear || null, round: dr.pickRound || null, pick: dr.pickNumber || null } : null,
     mlbDebut: p.mlbDebutDate || null,
     club: team.name || null,
+    clubId: team.id || null,
     // sport isn't hydrated on currentTeam by default; level is refined later
     // from milb data (highest level with 2026 stats) when available.
     il,
@@ -213,6 +214,20 @@ if (require.main !== module) return;
     ((d && d.people) || []).forEach(p => { bios[p.id] = bioFrom(p); });
   }
 
+  // ---- what level is each club? ----
+  // The badge beside a player's name should say where he is *now*. Deriving it
+  // from his percentile data lags: a pitcher promoted to Triple-A on Tuesday
+  // has too few innings there to be ranked, so he'd keep showing AA for weeks.
+  // His club is the authoritative answer, so ask what level his club plays at.
+  const clubLevel = {};
+  const clubIds = [...new Set(Object.values(bios).map(b => b && b.clubId).filter(Boolean))];
+  for (const cid of clubIds) {
+    const t = await api.team(cid);
+    const sportId = t && t.teams && t.teams[0] && t.teams[0].sport && t.teams[0].sport.id;
+    if (LVL_OF_SPORT[sportId]) clubLevel[cid] = LVL_OF_SPORT[sportId];
+  }
+  console.log(`club levels: ${Object.keys(clubLevel).length}/${clubIds.length} resolved`);
+
   // ---- minor league percentiles ----
   let milb = null;
   try {
@@ -247,7 +262,11 @@ if (require.main !== module) return;
         age: bio.age, birthDate: bio.birthDate, birthPlace: bio.birthPlace,
         ht: bio.ht, wt: bio.wt, bt: bio.bt, draftYear: bio.draftYear, draft: bio.draft,
         club: bio.club, il: bio.il, mlbDebut: bio.mlbDebut, graduated,
-        lvl: s.lvl || null,
+        // Where he is now (badge) vs. the level the shown stats come from.
+        // They differ for a few weeks after every promotion, and saying so is
+        // more honest than picking one and being wrong half the time.
+        lvl: clubLevel[bio.clubId] || s.lvl || null,
+        statLvl: s.lvl || null,
         kind: s.kind || (pitcher ? 'P' : 'H'),
         line: s.line || null,
         pa: s.pa || null, ip: s.ip || null,

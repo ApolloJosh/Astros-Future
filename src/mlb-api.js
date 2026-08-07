@@ -36,6 +36,8 @@ const api = {
     get(`${BASE}/people/${id}/stats?stats=career&group=${pitcher ? 'pitching' : 'hitting'}&sportId=1`),
   search: name =>
     get(`${BASE}/people/search?names=${encodeURIComponent(name)}&sportIds=1,11,12,13,14,16&hydrate=currentTeam`),
+  // A club, so its level can be read off `sport`.
+  team: id => get(`${BASE}/teams/${id}`),
   // Season-by-season history at one level. yearByYear ignores the minors
   // unless a sportId is named, and it only accepts one at a time, so the
   // caller loops the levels.
