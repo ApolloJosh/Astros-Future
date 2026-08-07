@@ -235,7 +235,10 @@
   }
   function pctSection(p) {
     const sample = sampleTxt(p);
-    const hd = (extra) => `<div class="pct-hd">Percentiles <span class="sub">${esc(p.lvl || '')}${sample ? ' · ' + sample : ''}${extra || ''}</span>${helpHTML(p.kind)}</div>`;
+    // Percentiles are computed at the level the stats came from, which isn't
+    // always where he plays today.
+    const sl = p.statLvl || p.lvl || '';
+    const hd = (extra) => `<div class="pct-hd">Percentiles <span class="sub">${esc(sl)}${sample ? ' · ' + sample : ''}${extra || ''}</span>${helpHTML(p.kind)}</div>`;
     if (!p.line) {
       return hd() + `<div class="empty-note">No 2026 game action yet${p.il ? ' — currently on the ' + esc(p.il) : ''}.</div>`;
     }
@@ -267,7 +270,7 @@
       `<div class="pvgrid">${box('Prospect score', p.score)}${box('Young for level', p.p.age)}${comps}</div>` +
       `<div class="sscale"><span style="color:#3254a8">POOR</span><span>AVERAGE</span><span style="color:#c42828">GREAT</span></div>` +
       bars +
-      `<div class="credit">Ranked against ${esc(p.lvl)} only, computed from the MLB Stats API. Inspired by <a href="https://prospectsavant.com" target="_blank" rel="noopener">Prospect Savant</a>.</div>`;
+      `<div class="credit">Ranked against ${esc(sl)} only, computed from the MLB Stats API. Inspired by <a href="https://prospectsavant.com" target="_blank" rel="noopener">Prospect Savant</a>.</div>`;
   }
 
   // ---------- rows ----------
@@ -323,7 +326,7 @@
     const bits = [p.bt ? 'B/T ' + p.bt : null, p.ht, p.wt ? p.wt + ' lbs' : null,
       p.birthPlace, draftTxt, p.club].filter(Boolean);
     const season = p.line
-      ? `<div class="season"><span class="lvl-tag">${esc(p.lvl || '—')}</span>${esc(p.line)}</div>`
+      ? `<div class="season"><span class="lvl-tag">${esc(p.statLvl || p.lvl || '—')}</span>${esc(p.line)}</div>`
       : `<div class="season"><span class="lvl-tag">2026</span>No game action yet</div>`;
     const stats = `<div class="stats-block">${season}${careerHTML(p)}${historyHTML(p)}</div>`;
     const article = p.article
