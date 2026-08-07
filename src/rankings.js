@@ -44,7 +44,9 @@ function fromRows(rows) {
     const name = (r[iName] || '').trim();
     if (!name) return;
     const rawRank = (r[iRank] || '').trim();
-    const rank = /^\d+$/.test(rawRank) ? +rawRank : null; // "HM" or blank -> honorable mention
+    // Decimals are allowed so a player can be slotted in as "14.5" without
+    // renumbering everyone below him; the list is renumbered on the way out.
+    const rank = /^\d+(\.\d+)?$/.test(rawRank) ? parseFloat(rawRank) : null; // "HM"/blank -> honorable mention
     prospects.push({
       rank, name,
       pos: iPos >= 0 ? (r[iPos] || '').trim() || null : null,
@@ -57,6 +59,10 @@ function fromRows(rows) {
   const ranked = prospects.filter(p => p.rank != null).sort((a, b) => a.rank - b.rank);
   const hm = prospects.filter(p => p.rank == null);
   if (ranked.length < 10) throw new Error(`sheet has only ${ranked.length} ranked players — refusing`);
+  // Renumber 1..N so gaps (1,2,5,9), ties and decimals all come out clean. The
+  // published rank is what the page shows beside a player once a visitor has
+  // dragged him somewhere else, so it has to be tidy.
+  ranked.forEach((p, i) => { p.rank = i + 1; });
   return { updated: new Date().toISOString().slice(0, 10), prospects: [...ranked, ...hm] };
 }
 
@@ -69,7 +75,9 @@ async function loadRankings() {
       const data = fromRows(parseCSV(await r.text()));
       // Cache the good read so a future sheet outage serves the last good list.
       fs.writeFileSync(FALLBACK, JSON.stringify(data, null, 2));
-      console.log(`rankings: sheet OK — ${data.prospects.length} players`);
+      const nRanked = data.prospects.filter(p => p.rank != null).length;
+      console.log(`rankings: sheet OK — ${nRanked} ranked + ${data.prospects.length - nRanked} honorable mentions`);
+      if (nRanked !== 30) console.warn(`  note: the sheet has ${nRanked} ranked players, so the page will show ${nRanked} rows`);
       return data;
     } catch (e) {
       console.warn('rankings: sheet failed (' + e.message + ') — using fallback file');
