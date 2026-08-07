@@ -272,6 +272,39 @@ const BASE = 'https://example.com/top30/';
   assert.strictEqual(links[0].getAttribute('target'), '_blank', 'opens in a new tab');
 }
 
+// ---- the embed must report its height even with no animation frames ----
+// requestAnimationFrame is suspended while a page is hidden, so a widget that
+// only posts from inside rAF leaves the host iframe stuck at its min-height
+// for anyone who opened the article in a background tab.
+{
+  const posted = [];
+  const dom = new JSDOM(html, { url: BASE, runScripts: 'outside-only', pretendToBeVisual: true });
+  // pretend to be framed
+  Object.defineProperty(dom.window, 'parent', {
+    value: { postMessage: (msg) => posted.push(msg) }, configurable: true,
+  });
+  // simulate a hidden page: no animation frames will ever run
+  dom.window.requestAnimationFrame = undefined;
+  dom.window.eval(dataJs);
+  dom.window.eval(appJs);
+  assert.ok(posted.length > 0, 'height is posted without waiting for an animation frame');
+  const h = posted.find(m => m && typeof m.af30Height === 'number');
+  assert.ok(h, 'message carries af30Height, got: ' + JSON.stringify(posted[0]));
+
+  // and it keeps reporting as content changes (expanding a row makes it taller)
+  const before = posted.length;
+  dom.window.document.querySelector('#list .row .row-main')
+    .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.ok(posted.length > before, 'expanding a row re-reports the height');
+
+  // top-level (not embedded) must stay silent
+  const solo = [];
+  const dom2 = new JSDOM(html, { url: BASE, runScripts: 'outside-only', pretendToBeVisual: true });
+  dom2.window.postMessage = (m) => solo.push(m);
+  dom2.window.eval(dataJs); dom2.window.eval(appJs);
+  assert.strictEqual(solo.length, 0, 'no postMessage when not in an iframe');
+}
+
 // ---- anything toggled with [hidden] must actually be invisible ----
 // An author `display:` rule outranks the browser's own [hidden]{display:none},
 // which is how two banners once showed permanently regardless of state. This is
