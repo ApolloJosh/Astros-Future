@@ -292,6 +292,7 @@ if (require.main !== module) return;
     rec.eta = pr.eta || CFG.etaAuto[rec.lvl] || null;
     rec.pipelineRank = pr.pipelineRank ?? null;
     rec.article = pr.article || null;
+    rec.acquired = pr.acquired || null;
     players.push(rec);
   }
 

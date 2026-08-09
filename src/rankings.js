@@ -5,7 +5,7 @@
  * fallback AND the cache of the last good sheet read.
  *
  * Sheet layout (tab name in config.sheetTab), one header row then:
- *   Rank | Player | Position | MLB ID | ETA | Pipeline Rank | Report Link
+ *   Rank | Player | Position | MLB ID | ETA | Pipeline Rank | Report Link | Acquired
  * Rank is 1-30, or "HM" for honorable mentions. Player + Rank are required;
  * everything else may be blank. MLB ID blank = we resolve it by name search.
  */
@@ -37,7 +37,8 @@ function fromRows(rows) {
   const hdr = rows[0].map(h => h.trim().toLowerCase());
   const col = name => hdr.findIndex(h => h.includes(name));
   const iRank = col('rank'), iName = col('player'), iPos = col('pos'),
-    iId = col('mlb id'), iEta = col('eta'), iPipe = col('pipeline'), iUrl = col('report');
+    iId = col('mlb id'), iEta = col('eta'), iPipe = col('pipeline'), iUrl = col('report'),
+    iAcq = col('acquired');
   if (iRank < 0 || iName < 0) throw new Error('sheet missing Rank/Player columns');
   const prospects = [];
   rows.slice(1).forEach(r => {
@@ -54,6 +55,10 @@ function fromRows(rows) {
       eta: iEta >= 0 ? (r[iEta] || '').trim() || null : null,
       pipelineRank: iPipe >= 0 && /^\d+$/.test((r[iPipe] || '').trim()) ? +(r[iPipe]).trim() : null,
       article: iUrl >= 0 ? (r[iUrl] || '').trim() || null : null,
+      // How he was signed. MLB's data can prove someone WAS drafted but never
+      // that he wasn't, so anything else — undrafted free agent, international
+      // signing, trade — has to be stated here rather than guessed.
+      acquired: iAcq >= 0 ? (r[iAcq] || '').trim().slice(0, 60) || null : null,
     });
   });
   const ranked = prospects.filter(p => p.rank != null).sort((a, b) => a.rank - b.rank);
