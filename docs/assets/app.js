@@ -141,6 +141,21 @@
   let staleLink = false; // a code we couldn't resolve — say so rather than fake it
   let uname = '';        // whose list this is, if they say
 
+  // When embedded, the host page passes ?home=<its own address> so shared links
+  // read astrosfuture.com/... instead of this widget's raw URL — which keeps
+  // the traffic (and the ad impression) on the article. Only trusted when we're
+  // actually in a frame, and only the origin+path is kept.
+  const HOME = (() => {
+    try {
+      if (window.parent === window) return null;
+      const raw = new URLSearchParams(location.search).get('home');
+      if (!raw) return null;
+      const u = new URL(raw);
+      if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+      return u.origin + u.pathname;
+    } catch (e) { return null; }
+  })();
+
   const LS_NAME = 'af30-name-v1';
   // Names travel in URLs and get drawn on a canvas, so strip anything that
   // isn't plain text and keep it short enough to fit the card.
@@ -316,13 +331,17 @@
       `</tr></thead><tbody>${body}</tbody></table></div>`;
   }
   function detail(p) {
-    // Comp rounds come through as codes like "PPI" or "4C", not numbers.
+    // How he got here. A draft record proves he was drafted; its absence proves
+    // nothing about how he signed, so we say nothing unless the sheet does.
+    // (MLB's bare `draftYear` is a draft-ELIGIBLE year — undrafted free agents
+    // carry one too, which is how several of them got mislabelled as drafted.)
     const dr = p.draft;
-    const draftTxt = dr && dr.round
-      ? (/^\d+$/.test(String(dr.round))
-        ? `Drafted ${dr.year} · Round ${dr.round}, Pick ${dr.pick}`
-        : `Drafted ${dr.year} · Comp Pick ${dr.pick}`)
-      : (p.draftYear ? 'Drafted ' + p.draftYear : 'Int’l signing');
+    const draftTxt = p.acquired ? p.acquired
+      : (dr && dr.round
+        ? (/^\d+$/.test(String(dr.round))
+          ? `Drafted ${dr.year} · Round ${dr.round}, Pick ${dr.pick}`
+          : `Drafted ${dr.year} · Comp Pick ${dr.pick}`)
+        : null);
     const bits = [p.bt ? 'B/T ' + p.bt : null, p.ht, p.wt ? p.wt + ' lbs' : null,
       p.birthPlace, draftTxt, p.club].filter(Boolean);
     const season = p.line
@@ -473,8 +492,8 @@
 
   // ---------- share: one button, one popup ----------
   function shareURL() {
-    const base = location.origin === 'null' || location.protocol === 'file:'
-      ? location.href.split('?')[0] : location.origin + location.pathname;
+    const base = HOME || (location.origin === 'null' || location.protocol === 'file:'
+      ? location.href.split('?')[0] : location.origin + location.pathname);
     const parts = [];
     if (!isDefault()) {
       const code = encode(order);
