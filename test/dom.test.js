@@ -85,6 +85,42 @@ const BASE = 'https://example.com/top30/';
     'viewing a shared list does not clobber visitor storage');
 }
 
+// ---- how a player signed: state it, or say nothing ----
+{
+  const withPlayer = patch => {
+    const base = JSON.parse(dataJs.replace(/^window\.AF_DATA = /, '').replace(/;\s*$/, ''));
+    Object.assign(base.players[0], patch);
+    const d = new JSDOM(html, { url: BASE, runScripts: 'outside-only', pretendToBeVisual: true });
+    d.window.eval('window.AF_DATA = ' + JSON.stringify(base) + ';');
+    d.window.eval(appJs);
+    const row = d.window.document.querySelector('#list .row');
+    row.classList.add('open');
+    return row.querySelector('.bio').textContent;
+  };
+
+  // a genuine draft record is stated in full
+  const drafted = withPlayer({ draft: { year: 2024, round: '1', pick: 28 }, draftYear: 2024, acquired: null });
+  assert.ok(drafted.includes('Drafted 2024 · Round 1, Pick 28'), 'real draft record shown: ' + drafted);
+
+  // draftYear WITHOUT a draft record is a draft-eligible year, not proof of
+  // being drafted — this is what mislabelled the undrafted free agents
+  const eligible = withPlayer({ draft: null, draftYear: 2024, acquired: null });
+  assert.ok(!/Drafted/.test(eligible), 'a bare draftYear no longer claims he was drafted: ' + eligible);
+  assert.ok(!/signing/i.test(eligible), 'and does not guess international signing either');
+
+  // no data at all: say nothing rather than invent a route
+  const unknown = withPlayer({ draft: null, draftYear: null, acquired: null });
+  assert.ok(!/Drafted|signing|free agent/i.test(unknown), 'silent when unknown: ' + unknown);
+  assert.ok(unknown.includes('lbs'), 'the rest of the bio still renders');
+
+  // the sheet has the final word
+  const stated = withPlayer({ draft: null, draftYear: 2024, acquired: 'Undrafted free agent, 2024' });
+  assert.ok(stated.includes('Undrafted free agent, 2024'), 'sheet value shown: ' + stated);
+  const override = withPlayer({ draft: { year: 2024, round: '1', pick: 28 }, acquired: 'Signed as a free agent' });
+  assert.ok(override.includes('Signed as a free agent') && !override.includes('Round 1'),
+    'sheet overrides even a draft record');
+}
+
 // ---- shared links point at the host article, not the widget's own address ----
 {
   const ARTICLE = 'https://astrosfuture.com/astros-top-prospects/';
