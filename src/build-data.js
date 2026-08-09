@@ -157,6 +157,25 @@ function historyFrom(entries, pitcher) {
   return { rows, career };
 }
 
+/**
+ * This season's line taken from the career history.
+ *
+ * The percentile pipeline deliberately ignores anyone under the display floor,
+ * so a player with a game or two has no line from it — which left the career
+ * row showing his debut while the season row above said "no game action yet".
+ * History has no floor, so it fills that gap. Percentiles stay absent; the page
+ * says the sample is too small, which is the honest version.
+ */
+function seasonFromHistory(rows, season, pitcher) {
+  if (!rows || !rows.length) return null;
+  const cur = rows.filter(r => String(r.y) === String(season));
+  if (!cur.length) return null;
+  const r = cur[0];   // already sorted highest level first
+  return pitcher
+    ? { lvl: r.lvl, ip: r.ip, line: `${r.era} ERA · ${r.whip} WHIP · ${r.k} K · ${r.ip} IP` }
+    : { lvl: r.lvl, pa: r.pa, line: `${r.avg} AVG · ${r.ops} OPS · ${r.hr} HR · ${r.sb} SB` };
+}
+
 async function fetchHistory(id, pitcher) {
   const group = pitcher ? 'pitching' : 'hitting';
   // Six levels in parallel — api.get() has its own concurrency limit, so this
@@ -181,7 +200,7 @@ async function isGraduated(id, pitcher) {
   return (t.atBats || 0) > 130;
 }
 
-module.exports = { historyFrom };   // for tests
+module.exports = { historyFrom, seasonFromHistory };   // for tests
 
 // Running as a script rather than being required by the test harness.
 if (require.main !== module) return;
@@ -257,6 +276,9 @@ if (require.main !== module) return;
       if (!hist && cache.players[id] && cache.players[id].history) {
         hist = { rows: cache.players[id].history, career: cache.players[id].career };
       }
+      // A debut or two sits below the percentile floor but is still a real
+      // season — take it from the history rather than showing "no game action".
+      const fromHist = s.line ? null : seasonFromHistory(hist && hist.rows, CFG.season, pitcher);
       rec = {
         id, name: pr.name, pos: pr.pos || bio.posApi,
         age: bio.age, birthDate: bio.birthDate, birthPlace: bio.birthPlace,
@@ -265,11 +287,12 @@ if (require.main !== module) return;
         // Where he is now (badge) vs. the level the shown stats come from.
         // They differ for a few weeks after every promotion, and saying so is
         // more honest than picking one and being wrong half the time.
-        lvl: clubLevel[bio.clubId] || s.lvl || null,
-        statLvl: s.lvl || null,
+        lvl: clubLevel[bio.clubId] || s.lvl || (fromHist && fromHist.lvl) || null,
+        statLvl: s.lvl || (fromHist && fromHist.lvl) || null,
         kind: s.kind || (pitcher ? 'P' : 'H'),
-        line: s.line || null,
-        pa: s.pa || null, ip: s.ip || null,
+        line: s.line || (fromHist && fromHist.line) || null,
+        pa: s.pa || (fromHist && fromHist.pa) || null,
+        ip: s.ip || (fromHist && fromHist.ip) || null,
         thin: s.thin || false,
         v: s.v || null, p: s.p || null,
         comp: s.comp || null, agg: s.agg ?? null,
