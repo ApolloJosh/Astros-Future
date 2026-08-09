@@ -8,7 +8,8 @@
       "mlbid": 829037,
       "eta": null,
       "pipelineRank": 1,
-      "article": "https://astrosfuture.com/2025/08/astros-prospect-profile-kevin-alvarez/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 2,
@@ -17,7 +18,8 @@
       "mlbid": 815832,
       "eta": null,
       "pipelineRank": 2,
-      "article": "https://astrosfuture.com/2025/08/astros-prospect-profile-xavier-neyens/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 3,
@@ -26,7 +28,8 @@
       "mlbid": 813314,
       "eta": null,
       "pipelineRank": null,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-logan-hughes/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 4,
@@ -35,7 +38,8 @@
       "mlbid": 806481,
       "eta": null,
       "pipelineRank": null,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-jack-radel/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 5,
@@ -44,7 +48,8 @@
       "mlbid": 837522,
       "eta": null,
       "pipelineRank": 4,
-      "article": "https://astrosfuture.com/2026/03/astros-prospect-profile-albert-fermin/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 6,
@@ -53,7 +58,8 @@
       "mlbid": 809343,
       "eta": null,
       "pipelineRank": 5,
-      "article": "https://astrosfuture.com/2025/08/astros-prospect-profile-bryce-mayer/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 7,
@@ -62,7 +68,8 @@
       "mlbid": 703676,
       "eta": null,
       "pipelineRank": 7,
-      "article": "https://astrosfuture.com/2025/08/astros-prospect-profile-ethan-frey/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 8,
@@ -71,7 +78,8 @@
       "mlbid": 814490,
       "eta": null,
       "pipelineRank": 6,
-      "article": "https://astrosfuture.com/2025/08/astros-prospect-profile-ethan-pecko/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 9,
@@ -80,7 +88,8 @@
       "mlbid": 828395,
       "eta": null,
       "pipelineRank": 3,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-jason-schiavone/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 10,
@@ -89,7 +98,8 @@
       "mlbid": 803544,
       "eta": null,
       "pipelineRank": null,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-wes-mendes/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 11,
@@ -98,7 +108,8 @@
       "mlbid": 801075,
       "eta": null,
       "pipelineRank": 9,
-      "article": "https://astrosfuture.com/2025/08/astros-prospect-profile-walker-janek/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 12,
@@ -107,7 +118,8 @@
       "mlbid": 805953,
       "eta": null,
       "pipelineRank": 15,
-      "article": "https://astrosfuture.com/2026/03/astros-prospect-profile-anthony-huezo/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 13,
@@ -116,7 +128,8 @@
       "mlbid": 806494,
       "eta": null,
       "pipelineRank": null,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-kam-durnin/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 14,
@@ -125,7 +138,8 @@
       "mlbid": 828679,
       "eta": null,
       "pipelineRank": null,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-beau-peterson/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 15,
@@ -134,16 +148,18 @@
       "mlbid": 826315,
       "eta": null,
       "pipelineRank": 19,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-cole-hertzler/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 16,
       "name": "Caden Powell",
-      "pos": "OF",
+      "pos": "SS",
       "mlbid": 702547,
       "eta": null,
       "pipelineRank": 23,
-      "article": "https://astrosfuture.com/2025/08/astros-prospect-profile-caden-powell/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 17,
@@ -152,7 +168,8 @@
       "mlbid": 830769,
       "eta": null,
       "pipelineRank": 17,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-nick-potter/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 18,
@@ -161,7 +178,8 @@
       "mlbid": 828672,
       "eta": null,
       "pipelineRank": null,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-jagger-beck/"
+      "article": null,
+      "acquired": "Undrafted free agent"
     },
     {
       "rank": 19,
@@ -170,7 +188,8 @@
       "mlbid": 828801,
       "eta": null,
       "pipelineRank": null,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-keon-johnson/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 20,
@@ -179,7 +198,8 @@
       "mlbid": 813844,
       "eta": null,
       "pipelineRank": 16,
-      "article": "https://astrosfuture.com/2026/03/astros-prospect-profile-will-bush/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 21,
@@ -188,7 +208,8 @@
       "mlbid": 825479,
       "eta": null,
       "pipelineRank": 21,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-luis-de-leon/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 22,
@@ -197,7 +218,8 @@
       "mlbid": 813896,
       "eta": null,
       "pipelineRank": 10,
-      "article": "https://astrosfuture.com/2025/08/astros-prospect-profile-joseph-sullivan/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 23,
@@ -206,7 +228,8 @@
       "mlbid": 806441,
       "eta": null,
       "pipelineRank": null,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-nehomar-ochoa/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 24,
@@ -215,7 +238,8 @@
       "mlbid": 830004,
       "eta": null,
       "pipelineRank": null,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-juan-fraide/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 25,
@@ -224,7 +248,8 @@
       "mlbid": 694545,
       "eta": null,
       "pipelineRank": 13,
-      "article": "https://astrosfuture.com/2026/03/astros-prospect-profile-jackson-nezuh/#google_vignette"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 26,
@@ -233,7 +258,8 @@
       "mlbid": 834234,
       "eta": null,
       "pipelineRank": 30,
-      "article": "https://astrosfuture.com/2026/06/astros-prospect-profile-jase-mitchell/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 27,
@@ -242,7 +268,8 @@
       "mlbid": 834872,
       "eta": null,
       "pipelineRank": 26,
-      "article": "https://astrosfuture.com/2026/06/astros-prospect-profile-gabel-pentecost/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 28,
@@ -251,7 +278,8 @@
       "mlbid": 821593,
       "eta": null,
       "pipelineRank": null,
-      "article": "https://astrosfuture.com/2026/08/astros-prospect-profile-adrian-ardines/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 29,
@@ -260,7 +288,8 @@
       "mlbid": 808027,
       "eta": null,
       "pipelineRank": null,
-      "article": "https://astrosfuture.com/2026/06/astros-prospect-profile-juan-sierra/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": 30,
@@ -269,7 +298,8 @@
       "mlbid": 696280,
       "eta": null,
       "pipelineRank": 25,
-      "article": "https://astrosfuture.com/2025/10/astros-prospect-profile-alonzo-tredwell/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -278,7 +308,8 @@
       "mlbid": 832795,
       "eta": null,
       "pipelineRank": 27,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -287,7 +318,8 @@
       "mlbid": 802959,
       "eta": null,
       "pipelineRank": 20,
-      "article": null
+      "article": null,
+      "acquired": "Undrafted free agent"
     },
     {
       "rank": null,
@@ -296,7 +328,8 @@
       "mlbid": 801802,
       "eta": null,
       "pipelineRank": 12,
-      "article": "https://astrosfuture.com/2026/03/astros-prospect-profile-james-hicks/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -305,7 +338,8 @@
       "mlbid": 823649,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -314,7 +348,8 @@
       "mlbid": 702520,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -323,7 +358,8 @@
       "mlbid": 699043,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -332,7 +368,8 @@
       "mlbid": 809338,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": "Undrafted free agent, 2024"
     },
     {
       "rank": null,
@@ -341,7 +378,8 @@
       "mlbid": 805168,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -350,7 +388,8 @@
       "mlbid": 809143,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -359,7 +398,8 @@
       "mlbid": 813842,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -368,7 +408,8 @@
       "mlbid": 811718,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -377,7 +418,8 @@
       "mlbid": 695046,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": "Undrafted free agent, 2024"
     },
     {
       "rank": null,
@@ -386,7 +428,8 @@
       "mlbid": 835483,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -395,7 +438,8 @@
       "mlbid": 822163,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -404,7 +448,8 @@
       "mlbid": 800063,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -413,7 +458,8 @@
       "mlbid": 806066,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -422,7 +468,8 @@
       "mlbid": 809085,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -431,7 +478,8 @@
       "mlbid": 801573,
       "eta": null,
       "pipelineRank": 29,
-      "article": "https://astrosfuture.com/2026/03/astros-prospect-profile-ryan-forcucci/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -440,7 +488,8 @@
       "mlbid": 829860,
       "eta": null,
       "pipelineRank": 18,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -449,7 +498,8 @@
       "mlbid": 828599,
       "eta": null,
       "pipelineRank": 8,
-      "article": "https://astrosfuture.com/2026/03/astros-prospect-profile-lucas-spence/"
+      "article": null,
+      "acquired": "Undrafted free agent"
     },
     {
       "rank": null,
@@ -458,7 +508,8 @@
       "mlbid": 699044,
       "eta": null,
       "pipelineRank": 11,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -467,7 +518,8 @@
       "mlbid": 695001,
       "eta": null,
       "pipelineRank": 14,
-      "article": null
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -476,7 +528,8 @@
       "mlbid": 805904,
       "eta": null,
       "pipelineRank": 24,
-      "article": "https://astrosfuture.com/2026/03/astros-prospect-profile-zach-cole/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -485,7 +538,8 @@
       "mlbid": 809789,
       "eta": null,
       "pipelineRank": 22,
-      "article": "https://astrosfuture.com/2026/03/astros-prospect-profile-parker-smith/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -494,7 +548,8 @@
       "mlbid": 823809,
       "eta": null,
       "pipelineRank": 28,
-      "article": "https://astrosfuture.com/2026/02/astros-prospect-profile-nick-monistere/"
+      "article": null,
+      "acquired": null
     },
     {
       "rank": null,
@@ -503,7 +558,8 @@
       "mlbid": 813865,
       "eta": null,
       "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": "Undrafted free agent"
     },
     {
       "rank": null,
@@ -512,16 +568,8 @@
       "mlbid": 687062,
       "eta": null,
       "pipelineRank": null,
-      "article": null
-    },
-    {
-      "rank": null,
-      "name": "Brett Gillis",
-      "pos": null,
-      "mlbid": null,
-      "eta": null,
-      "pipelineRank": null,
-      "article": null
+      "article": null,
+      "acquired": null
     }
   ]
 }

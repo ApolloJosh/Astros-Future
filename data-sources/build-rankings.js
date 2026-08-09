@@ -82,11 +82,25 @@ const HM = [
   ['Ramsey David', 'RHP', 687062, null],
 ];
 
+// How a player signed. MLB's API can prove someone was drafted but never that
+// he wasn't — an undrafted free agent still carries a draft-eligible year, which
+// is what made several of these read "Drafted 2024". Anything not provable is
+// recorded here by hand and left blank when genuinely unknown.
+const ACQUIRED = {
+  828672: 'Undrafted free agent',        // Jagger Beck
+  802959: 'Undrafted free agent',        // Max Holy
+  809338: 'Undrafted free agent, 2024',  // Trevor Austin — signed after that draft
+  695046: 'Undrafted free agent, 2024',  // Drew Brutcher — same
+  828599: 'Undrafted free agent',        // Lucas Spence
+  813865: 'Undrafted free agent',        // Hudson Leach
+  // 835483 Brandon McPherson — signing route unconfirmed, deliberately blank
+};
+
 const prospects = [
   ...TOP30.map(([rank, name, pos, mlbid, pipelineRank]) =>
-    ({ rank, name, pos, mlbid, eta: null, pipelineRank, article: null })),
+    ({ rank, name, pos, mlbid, eta: null, pipelineRank, article: null, acquired: ACQUIRED[mlbid] || null })),
   ...HM.map(([name, pos, mlbid, pipelineRank]) =>
-    ({ rank: null, name, pos, mlbid, eta: null, pipelineRank, article: null })),
+    ({ rank: null, name, pos, mlbid, eta: null, pipelineRank, article: null, acquired: ACQUIRED[mlbid] || null })),
 ];
 
 const ids = prospects.map(p => p.mlbid);
@@ -102,9 +116,9 @@ const esc = v => {
   const s = v == null ? '' : String(v);
   return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 };
-const rows = [['Rank', 'Player', 'Position', 'MLB ID', 'ETA', 'Pipeline Rank', 'Report Link']];
+const rows = [['Rank', 'Player', 'Position', 'MLB ID', 'ETA', 'Pipeline Rank', 'Report Link', 'Acquired']];
 prospects.forEach(p => rows.push([
-  p.rank == null ? 'HM' : p.rank, p.name, p.pos, p.mlbid, '', p.pipelineRank ?? '', '',
+  p.rank == null ? 'HM' : p.rank, p.name, p.pos, p.mlbid, '', p.pipelineRank ?? '', '', p.acquired ?? '',
 ]));
 fs.writeFileSync(path.join(__dirname, '..', 'astros-future-rankings.csv'),
   rows.map(r => r.map(esc).join(',')).join('\r\n') + '\r\n');
