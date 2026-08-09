@@ -85,6 +85,34 @@ const BASE = 'https://example.com/top30/';
     'viewing a shared list does not clobber visitor storage');
 }
 
+// ---- a debutant's season and career must agree ----
+{
+  const base = JSON.parse(dataJs.replace(/^window\.AF_DATA = /, '').replace(/;\s*$/, ''));
+  Object.assign(base.players[0], {
+    kind: 'H', lvl: 'A', statLvl: 'A', pa: 4, ip: null,
+    line: '.250 AVG · .500 OPS · 0 HR · 0 SB',
+    v: null, p: null, comp: null, score: null, poolN: null,
+    career: { kind: 'H', seasons: 1, g: 1, pa: 4, avg: '.250', obp: '.250', slg: '.250', ops: '.500', hr: 0, sb: 0, bb: 0, k: 1 },
+    history: [{ y: '2026', lvl: 'A', team: 'Fayetteville Woodpeckers', g: 1, pa: 4, avg: '.250', obp: '.250', slg: '.250', ops: '.500', hr: 0, sb: 0 }],
+  });
+  const dom = new JSDOM(html, { url: BASE, runScripts: 'outside-only', pretendToBeVisual: true });
+  dom.window.eval('window.AF_DATA = ' + JSON.stringify(base) + ';');
+  dom.window.eval(appJs);
+  const row = dom.window.document.querySelector('#list .row');
+  row.classList.add('open');
+
+  const season = row.querySelector('.season').textContent;
+  const career = row.querySelector('.career').textContent;
+  assert.ok(season.includes('.250 AVG'), 'the season line shows his game: ' + season);
+  assert.ok(!/No game action/i.test(season), 'and no longer claims he has not played');
+  assert.ok(career.includes('.250 AVG'), 'career agrees with the season');
+
+  const pct = row.querySelector('.pct-hd').parentElement.textContent;
+  assert.ok(/Not enough playing time/i.test(pct), 'percentiles explain the small sample: ' + pct.slice(0, 160));
+  assert.ok(!/No 2026 game action/i.test(pct), 'and do not contradict the line above');
+  assert.ok(pct.includes('4 PA'), 'sample size shown');
+}
+
 // ---- how a player signed: state it, or say nothing ----
 {
   const withPlayer = patch => {

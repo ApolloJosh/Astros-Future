@@ -2,7 +2,7 @@
 // Rate stats must come from summed components — averaging seasons is wrong
 // whenever playing time is uneven, which for prospects it always is.
 const assert = require('assert');
-const { historyFrom } = require('../src/build-data');
+const { historyFrom, seasonFromHistory } = require('../src/build-data');
 
 // ---- hitter promoted mid-season ----
 {
@@ -77,5 +77,35 @@ assert.strictEqual(historyFrom([{ lvl: 'AA', splits: [] }], false), null, 'no ap
 assert.strictEqual(
   historyFrom([{ lvl: 'AA', splits: [{ season: '2026', stat: { plateAppearances: 0 } }] }], false),
   null, 'zero PA rows are skipped');
+
+// ---- a player with one game still has a season ----
+// The percentile pipeline ignores anyone under the floor, which once left a
+// debutant's career row showing the game while his 2026 row said "no action".
+{
+  const rows = [
+    { y: '2026', lvl: 'A', team: 'Fayetteville Woodpeckers', g: 1, pa: 4, avg: '.250', obp: '.250', slg: '.250', ops: '.500', hr: 0, sb: 0 },
+  ];
+  const s = seasonFromHistory(rows, 2026, false);
+  assert.ok(s, 'one game still produces a season line');
+  assert.strictEqual(s.lvl, 'A');
+  assert.strictEqual(s.pa, 4, 'sample size carried through so the page can flag it');
+  assert.ok(s.line.includes('.250 AVG') && s.line.includes('.500 OPS'), 'line reads normally: ' + s.line);
+
+  // multi-level season takes the top stop
+  const promoted = seasonFromHistory([
+    { y: '2026', lvl: 'AAA', team: 'Sugar Land', g: 2, pa: 6, avg: '.200', obp: '.200', slg: '.200', ops: '.400', hr: 0, sb: 0 },
+    { y: '2026', lvl: 'AA', team: 'Corpus Christi', g: 50, pa: 210, avg: '.280', obp: '.350', slg: '.450', ops: '.800', hr: 7, sb: 4 },
+  ], 2026, false);
+  assert.strictEqual(promoted.lvl, 'AAA', 'highest level of the season wins');
+
+  // pitchers too
+  const p = seasonFromHistory([{ y: '2026', lvl: 'Rk', team: 'FCL', g: 1, gs: 1, ip: '2.0', era: '0.00', whip: '0.50', k: 3, bb: 0 }], 2026, true);
+  assert.ok(p.line.includes('0.00 ERA') && p.line.includes('2.0 IP'), 'pitcher line: ' + p.line);
+  assert.strictEqual(p.ip, '2.0');
+
+  // last year's rows must not masquerade as this season
+  assert.strictEqual(seasonFromHistory(rows, 2027, false), null, 'no rows for the season -> null');
+  assert.strictEqual(seasonFromHistory(null, 2026, false), null, 'no history at all -> null');
+}
 
 console.log('history.test: OK');
