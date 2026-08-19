@@ -1,0 +1,208 @@
+/* Astros Future — scoreboard styles, shared by the ticker and the Scores page.
+   Same palette as the Top 30 widget. */
+:root {
+  --navy: #013369;
+  --flame: #FE4020;
+  --burnt: #D15300;
+  --bg: #F2F2F2;
+  --card: #ffffff;
+  --ink: #000000;
+  --mut: #5d6470;
+  --line: #e4e6ea;
+  --win: #1d7a4f;
+  --live: #e11900;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--burnt); }
+[hidden] { display: none !important; }
+
+/* ==================== TICKER ==================== */
+.ticker {
+  background: var(--navy);
+  border-top: 3px solid var(--flame);
+  border-bottom: 3px solid var(--flame);
+  display: flex; align-items: stretch;
+  overflow: hidden;
+}
+.ticker-label {
+  flex: none; display: flex; align-items: center; gap: 8px;
+  padding: 0 14px; background: rgba(255,255,255,.07);
+  color: #fff; font-weight: 900; font-size: 11px;
+  letter-spacing: 1.2px; text-transform: uppercase; white-space: nowrap;
+  border-right: 1px solid rgba(255,255,255,.14);
+}
+.ticker-rail {
+  flex: 1; display: flex; align-items: stretch; gap: 0;
+  overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.ticker-rail::-webkit-scrollbar { display: none; }
+.tg {
+  flex: none; display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px; text-decoration: none; color: #fff;
+  border-right: 1px solid rgba(255,255,255,.12);
+  transition: background .15s;
+}
+.tg:hover { background: rgba(255,255,255,.09); }
+.tg-lvl {
+  font-size: 10px; font-weight: 900; letter-spacing: .6px;
+  color: #ffd9cf; background: rgba(254,64,32,.22);
+  border-radius: 4px; padding: 2px 6px; white-space: nowrap;
+}
+.tg-teams { display: flex; flex-direction: column; gap: 1px; font-variant-numeric: tabular-nums; }
+.tg-row { display: flex; align-items: baseline; gap: 7px; white-space: nowrap; }
+.tg-abbr { font-size: 12.5px; font-weight: 700; color: rgba(255,255,255,.85); min-width: 44px; }
+.tg-row.us .tg-abbr { color: #fff; }
+.tg-score { font-size: 14px; font-weight: 900; margin-left: auto; }
+.tg-row.lost .tg-abbr, .tg-row.lost .tg-score { color: rgba(255,255,255,.5); }
+.tg-row.won .tg-score { color: #7ee2b8; }
+.tg-state {
+  font-size: 11px; font-weight: 700; color: #c9d4e4; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px; min-width: 46px;
+}
+.tg-state.is-live { color: #fff; }
+.dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--live);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+.ticker-empty {
+  color: #c9d4e4; font-size: 13px; padding: 12px 16px; white-space: nowrap;
+}
+.ticker-more {
+  flex: none; display: flex; align-items: center; padding: 0 14px;
+  background: var(--flame); color: #fff; text-decoration: none;
+  font-size: 11px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase;
+}
+
+/* ==================== SCORES PAGE ==================== */
+.wrap { max-width: 900px; margin: 0 auto; padding: 16px 12px 40px; }
+.page-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.page-title {
+  margin: 0; font-size: 24px; font-weight: 900; color: var(--navy);
+  text-transform: uppercase; letter-spacing: .5px;
+}
+.page-title em { font-style: normal; color: var(--flame); }
+.datenav { display: flex; align-items: center; gap: 6px; }
+.datenav button {
+  font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+  background: var(--card); color: var(--navy);
+  border: 1.5px solid var(--line); border-radius: 8px; padding: 7px 12px;
+}
+.datenav button:hover { border-color: var(--navy); }
+.datenav button[disabled] { opacity: .4; cursor: default; }
+.datenav .today-btn { background: var(--navy); color: #fff; border-color: var(--navy); }
+.datelabel {
+  font-weight: 900; color: var(--navy); font-size: 14px;
+  min-width: 168px; text-align: center;
+}
+
+.game {
+  background: var(--card); border-radius: 12px; margin-bottom: 12px;
+  border-left: 5px solid var(--navy); box-shadow: 0 1px 3px rgba(0,0,0,.07);
+  overflow: hidden;
+}
+.game.is-live { border-left-color: var(--live); }
+.game.won { border-left-color: var(--win); }
+.game-head {
+  display: flex; align-items: center; gap: 14px; padding: 12px 16px;
+  cursor: pointer; user-select: none;
+}
+.g-lvl {
+  flex: none; width: 52px; text-align: center;
+  font-size: 11px; font-weight: 900; letter-spacing: .5px;
+  color: #fff; background: var(--navy); border-radius: 5px; padding: 3px 0;
+}
+.g-teams { flex: 1; min-width: 0; }
+.g-row { display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+.g-name { font-weight: 700; font-size: 15px; color: var(--ink); }
+.g-row.lost .g-name, .g-row.lost .g-runs { color: var(--mut); font-weight: 500; }
+.g-org { font-size: 11.5px; color: var(--mut); font-weight: 400; }
+.g-runs { margin-left: auto; font-weight: 900; font-size: 17px; }
+.g-row.won .g-runs { color: var(--win); }
+.g-state { flex: none; text-align: right; min-width: 96px; }
+.g-state .s1 { font-weight: 900; font-size: 13px; color: var(--navy); display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+.g-state.is-live .s1 { color: var(--live); }
+.g-state .s2 { font-size: 11.5px; color: var(--mut); }
+.g-caret { flex: none; color: #c3c8d0; font-size: 12px; transition: transform .18s; }
+.game.open .g-caret { transform: rotate(90deg); }
+
+.g-body { display: none; border-top: 1px solid var(--line); padding: 14px 16px; }
+.game.open .g-body { display: block; }
+.g-loading { color: var(--mut); font-size: 13px; padding: 8px 0; }
+
+.linescore { overflow-x: auto; margin-bottom: 14px; }
+.linescore table { border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.linescore th, .linescore td { padding: 4px 7px; text-align: center; min-width: 22px; }
+.linescore th {
+  font-size: 10px; font-weight: 900; color: var(--mut);
+  text-transform: uppercase; border-bottom: 1.5px solid var(--line);
+}
+.linescore td.team { text-align: left; font-weight: 700; color: var(--navy); white-space: nowrap; padding-right: 12px; }
+.linescore td.tot { font-weight: 900; }
+.linescore .sep { border-left: 1.5px solid var(--line); }
+
+.bs-hd {
+  font-size: 12px; font-weight: 900; color: var(--navy); text-transform: uppercase;
+  letter-spacing: .5px; margin: 12px 0 4px;
+}
+.bs { overflow-x: auto; }
+.bs table { border-collapse: collapse; width: 100%; min-width: 420px; font-size: 12.5px; }
+.bs th {
+  font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .4px;
+  color: var(--mut); border-bottom: 1.5px solid var(--line); padding: 4px 6px; text-align: right;
+}
+.bs td { padding: 4px 6px; text-align: right; border-bottom: 1px solid #f1f2f5; font-variant-numeric: tabular-nums; }
+.bs th:first-child, .bs td:first-child { text-align: left; }
+.bs tbody tr:last-child td { border-bottom: 0; }
+.bs .pos { color: var(--mut); font-size: 11px; margin-left: 4px; }
+.pros {
+  display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 900;
+  background: var(--flame); color: #fff; border-radius: 4px; padding: 1px 5px;
+  text-decoration: none; white-space: nowrap;
+}
+.pros.hm { background: var(--mut); }
+.pros:hover { background: var(--burnt); }
+.live-now {
+  background: #fff7f5; border: 1px solid #ffd2c6; border-radius: 8px;
+  padding: 8px 10px; font-size: 12.5px; color: var(--ink); margin-bottom: 12px;
+}
+.live-now b { color: var(--navy); }
+.empty {
+  background: var(--card); border-radius: 12px; padding: 28px 18px;
+  text-align: center; color: var(--mut); font-size: 14px;
+}
+.foot { color: var(--mut); font-size: 11.5px; text-align: center; margin-top: 22px; }
+
+@media (max-width: 560px) {
+  /* Every pixel spent on the label is a pixel not spent on a score, and the
+     orange "All scores" button already says what this strip is. */
+  .ticker-label { display: none; }
+  .tg { padding: 8px 11px; gap: 8px; }
+  .tg-lvl { font-size: 9px; padding: 2px 5px; }
+  .tg-abbr { min-width: 38px; font-size: 12px; }
+  .tg-score { font-size: 13px; }
+  .tg-state { min-width: 40px; font-size: 10.5px; }
+  .ticker-more { padding: 0 10px; font-size: 10px; }
+
+  .wrap { padding: 12px 8px 30px; }
+  .page-title { font-size: 19px; }
+  .datelabel { min-width: 120px; font-size: 13px; }
+  .datenav button { padding: 6px 10px; font-size: 13px; }
+  .game-head { gap: 10px; padding: 10px 12px; }
+  .g-lvl { width: 44px; font-size: 10px; }
+  .g-name { font-size: 14px; }
+  .g-state { min-width: 74px; }
+  .g-body { padding: 12px; }
+}
