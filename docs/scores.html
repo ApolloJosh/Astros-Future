@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Astros Minor League Scores</title>
+<meta name="description" content="Daily scores and box scores for every Houston Astros minor league affiliate.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/scores.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="page-head">
+    <h1 class="page-title">Farm <em>Scores</em></h1>
+    <div class="datenav">
+      <button id="prev" aria-label="Previous day">◀</button>
+      <span class="datelabel" id="datelabel">…</span>
+      <button id="next" aria-label="Next day">▶</button>
+      <button id="today" class="today-btn">Today</button>
+    </div>
+  </div>
+
+  <div id="games"><div class="empty">Loading scores…</div></div>
+
+  <p class="foot">Scores and box scores from the
+    <a href="https://statsapi.mlb.com" target="_blank" rel="noopener">MLB Stats API</a>,
+    refreshed live. Times shown in Central.
+    Ranks link to the <a href="index.html" target="_top">Astros Future Top 30</a>.</p>
+</div>
+
+<script src="assets/milb.js"></script>
+<script src="assets/scores.js"></script>
+</body>
+</html>
