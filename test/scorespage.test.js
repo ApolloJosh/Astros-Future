@@ -58,10 +58,10 @@ const boxscore = { teams: {
     batters: [801075, 813844, 800516],
     pitchers: [803247],
     players: {
-      ID801075: player(801075, 'Walker Janek', 'C', { atBats: 4, runs: 1, hits: 2, rbi: 1, baseOnBalls: 0, strikeOuts: 1 }, null, { batting: { avg: '.239' } }),
-      ID813844: player(813844, 'Will Bush', 'DH', { atBats: 3, runs: 0, hits: 0, rbi: 0, baseOnBalls: 1, strikeOuts: 2 }, null, { batting: { avg: '.252' } }),
-      ID800516: player(800516, 'Alberto Hernandez', 'SS', { atBats: 4, runs: 1, hits: 1, rbi: 2, baseOnBalls: 0, strikeOuts: 0 }, null, { batting: { avg: '.271' } }),
-      ID803247: player(803247, 'Jose Guedez', 'P', null, { inningsPitched: '5.0', hits: 6, runs: 4, earnedRuns: 4, baseOnBalls: 2, strikeOuts: 5 }, { pitching: { era: '4.15' } }),
+      ID801075: player(801075, 'Walker Janek', 'C', { atBats: 4, runs: 1, hits: 2, doubles: 1, triples: 0, homeRuns: 1, rbi: 1, baseOnBalls: 0, strikeOuts: 1, stolenBases: 2 }, null, { batting: { avg: '.239' } }),
+      ID813844: player(813844, 'Will Bush', 'DH', { atBats: 3, runs: 0, hits: 0, doubles: 0, triples: 0, homeRuns: 0, rbi: 0, baseOnBalls: 1, strikeOuts: 2, stolenBases: 0 }, null, { batting: { avg: '.252' } }),
+      ID800516: player(800516, 'Alberto Hernandez', 'SS', { atBats: 4, runs: 1, hits: 1, doubles: 0, triples: 1, homeRuns: 0, rbi: 2, baseOnBalls: 0, strikeOuts: 0, stolenBases: 0 }, null, { batting: { avg: '.271' } }),
+      ID803247: player(803247, 'Jose Guedez', 'P', null, { inningsPitched: '5.0', hits: 6, runs: 4, earnedRuns: 4, homeRuns: 2, baseOnBalls: 2, strikeOuts: 5 }, { pitching: { era: '4.15' } }),
     },
   },
   away: {
@@ -141,6 +141,36 @@ const settle = () => new Promise(r => setTimeout(r, 60));
   const homeCells = [...rows[1].querySelectorAll('td')].map(t => t.textContent);
   assert.strictEqual(homeCells[0], 'Corpus Christi', 'home team on the bottom row');
   assert.deepStrictEqual(homeCells.slice(-3), ['4', '7', '1'], 'R H E');
+
+  // --- extra base hits and steals ---
+  {
+    const heads = [...aa.querySelectorAll('.bs table')][0].querySelectorAll('th');
+    const labels = [...heads].map(h => h.textContent);
+    ['2B', '3B', 'HR', 'SB'].forEach(c =>
+      assert.ok(labels.includes(c), 'batting table has a ' + c + ' column, got ' + labels.join(' ')));
+    // Janek: 1 double, 0 triples, 1 homer, 2 steals
+    const janekRow = [...aa.querySelectorAll('.bs tbody tr')].find(r => r.textContent.includes('Walker Janek'));
+    const cells = [...janekRow.querySelectorAll('td')].map(t => t.textContent.trim());
+    const idx = n => labels.indexOf(n);
+    assert.strictEqual(cells[idx('2B')], '1', 'his double');
+    assert.strictEqual(cells[idx('HR')], '1', 'his home run');
+    assert.strictEqual(cells[idx('SB')], '2', 'his steals');
+    assert.strictEqual(cells[idx('3B')], '0', 'zeros read as 0, same as every other column');
+    // Bush went 0-for-3: every counting column should say 0, none of them blank
+    const bushRow = [...aa.querySelectorAll('.bs tbody tr')].find(r => r.textContent.includes('Will Bush'));
+    const bush = [...bushRow.querySelectorAll('td')].map(t => t.textContent.trim());
+    ['2B', '3B', 'HR', 'SB', 'R', 'RBI'].forEach(c =>
+      assert.strictEqual(bush[idx(c)], '0', c + ' shows a plain zero'));
+    // triples still present in the markup so the desktop table is complete
+    assert.ok(janekRow.querySelector('td.tri'), 'triples column exists (hidden on phones by CSS)');
+
+    // pitchers show home runs allowed
+    const pHeads = [...[...aa.querySelectorAll('.bs table')][1].querySelectorAll('th')].map(h => h.textContent);
+    assert.ok(pHeads.includes('HR'), 'pitching table has HR allowed: ' + pHeads.join(' '));
+    const guedez = [...aa.querySelectorAll('.bs tbody tr')].find(r => r.textContent.includes('Jose Guedez'));
+    const pCells = [...guedez.querySelectorAll('td')].map(t => t.textContent.trim());
+    assert.strictEqual(pCells[pHeads.indexOf('HR')], '2', 'two homers allowed');
+  }
 
   // --- prospect badges ---
   const badges = [...aa.querySelectorAll('.pros')].map(a => ({ txt: a.textContent, href: a.getAttribute('href') }));
