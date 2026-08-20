@@ -89,12 +89,16 @@
       const season = (pl.seasonStats && pl.seasonStats.batting) || {};
       return `<tr><td>${M.esc(pl.person.fullName)}<span class="pos">${M.esc((pl.position || {}).abbreviation || '')}</span>${prosBadge(pl.person.id, pros)}</td>` +
         `<td>${b.atBats ?? 0}</td><td>${b.runs ?? 0}</td><td>${b.hits ?? 0}</td>` +
+        `<td>${b.doubles ?? 0}</td><td class="tri">${b.triples ?? 0}</td><td>${b.homeRuns ?? 0}</td>` +
         `<td>${b.rbi ?? 0}</td><td>${b.baseOnBalls ?? 0}</td><td>${b.strikeOuts ?? 0}</td>` +
+        `<td>${b.stolenBases ?? 0}</td>` +
         `<td>${season.avg || '—'}</td></tr>`;
     }).join('');
     if (!rows) return '';
     return `<div class="bs"><table><thead><tr><th>Batting</th><th>AB</th><th>R</th><th>H</th>` +
-      `<th>RBI</th><th>BB</th><th>K</th><th>AVG</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      `<th class="xbh">2B</th><th class="xbh tri">3B</th><th class="xbh">HR</th>` +
+      `<th>RBI</th><th>BB</th><th>K</th><th class="xbh">SB</th><th>AVG</th>` +
+      `</tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 
   function pitTable(side, pros) {
@@ -106,12 +110,14 @@
       const season = (pl.seasonStats && pl.seasonStats.pitching) || {};
       return `<tr><td>${M.esc(pl.person.fullName)}${prosBadge(pl.person.id, pros)}</td>` +
         `<td>${p.inningsPitched ?? '0.0'}</td><td>${p.hits ?? 0}</td><td>${p.runs ?? 0}</td>` +
-        `<td>${p.earnedRuns ?? 0}</td><td>${p.baseOnBalls ?? 0}</td><td>${p.strikeOuts ?? 0}</td>` +
+        `<td>${p.earnedRuns ?? 0}</td><td>${p.homeRuns ?? 0}</td>` +
+        `<td>${p.baseOnBalls ?? 0}</td><td>${p.strikeOuts ?? 0}</td>` +
         `<td>${season.era || '—'}</td></tr>`;
     }).join('');
     if (!rows) return '';
     return `<div class="bs"><table><thead><tr><th>Pitching</th><th>IP</th><th>H</th><th>R</th>` +
-      `<th>ER</th><th>BB</th><th>K</th><th>ERA</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      `<th>ER</th><th class="xbh">HR</th><th>BB</th><th>K</th><th>ERA</th>` +
+      `</tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 
   async function fillBody(el, g) {

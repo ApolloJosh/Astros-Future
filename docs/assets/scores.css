@@ -167,6 +167,9 @@ a { color: var(--burnt); }
 .bs th:first-child, .bs td:first-child { text-align: left; }
 .bs tbody tr:last-child td { border-bottom: 0; }
 .bs .pos { color: var(--mut); font-size: 11px; margin-left: 4px; }
+/* Extra-base hits and steals: headers tinted so the added columns are easy to
+   find, but the numbers themselves read like every other column. */
+.bs th.xbh { color: var(--burnt); }
 .pros {
   display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 900;
   background: var(--flame); color: #fff; border-radius: 4px; padding: 1px 5px;
@@ -205,4 +208,9 @@ a { color: var(--burnt); }
   .g-name { font-size: 14px; }
   .g-state { min-width: 74px; }
   .g-body { padding: 12px; }
+  /* Triples are rare enough that on a phone the column costs more than it
+     earns; 2B, HR and SB stay. The table still scrolls sideways if needed. */
+  .bs th.tri, .bs td.tri { display: none; }
+  .bs table { min-width: 480px; }
+  .bs th, .bs td { padding: 4px 5px; }
 }
