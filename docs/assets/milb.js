@@ -191,8 +191,13 @@
     if (typeof window === 'undefined' || window.parent === window) return;
     const post = () => {
       try {
-        window.parent.postMessage(
-          { af30Height: document.documentElement.scrollHeight }, '*');
+        // Measure the content, not the document: documentElement.scrollHeight
+        // is never smaller than the viewport, and inside an iframe the viewport
+        // IS the iframe — so a short widget would report the frame's current
+        // height and could never shrink back down.
+        const h = Math.ceil(document.body.getBoundingClientRect().height)
+          || document.body.scrollHeight;
+        window.parent.postMessage({ af30Height: h }, '*');
       } catch (e) {}
     };
     post();

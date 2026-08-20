@@ -676,7 +676,13 @@
   function sendHeight() {
     if (window.parent === window) return;
     const post = () => {
-      try { parent.postMessage({ af30Height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
+      try {
+        // Content height, not document height — the latter can't go below the
+        // viewport, which inside an iframe is the frame itself.
+        const h = Math.ceil(document.body.getBoundingClientRect().height)
+          || document.body.scrollHeight;
+        parent.postMessage({ af30Height: h }, '*');
+      } catch (e) {}
     };
     // Post immediately, THEN again after layout settles. The immediate call
     // matters: requestAnimationFrame never fires while a page is hidden, so a
